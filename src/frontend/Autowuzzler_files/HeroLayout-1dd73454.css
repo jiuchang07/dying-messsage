@@ -1,0 +1,125 @@
+footer.svelte-1tx3p8b {
+  background-color: #160000;
+  color: #fff;
+}
+a.svelte-1tx3p8b {
+  color: #fff;
+}
+a.svelte-1tx3p8b:hover {
+  color: #ddd;
+}
+.inner.svelte-1tx3p8b {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+.layout.svelte-czft6b.svelte-czft6b {
+  min-height: 110vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+.hero.svelte-czft6b.svelte-czft6b {
+  position: relative;
+  background-color: #ffffff;
+  text-align: center;
+  height: 31vh;
+  min-height: 260px;
+  background: url(../static/night_of_the_living_dead_cropped.png);
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+}
+.hero.svelte-czft6b.svelte-czft6b:after {
+  content: '';
+  display: block;
+  background-color: rgba(142, 142, 142, 0.6);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(4px);
+}
+.hero.svelte-czft6b > .svelte-czft6b {
+  z-index: 1;
+  position: relative;
+}
+@media screen and (max-width: 400px) {
+  .hero.svelte-czft6b.svelte-czft6b {
+    min-height: 150px;
+    height: auto;
+  }
+  .hero.svelte-czft6b .autowuzzler.svelte-czft6b {
+    font-size: 2.2rem;
+  }
+}
+.autowuzzler.svelte-czft6b.svelte-czft6b {
+  font-size: 6rem;
+  margin: 0;
+  color: rgb(0, 0, 0);
+}
+.autowuzzler.svelte-czft6b a.svelte-czft6b,
+.autowuzzler.svelte-czft6b a.svelte-czft6b:hover,
+.autowuzzler.svelte-czft6b a.svelte-czft6b:focus,
+.autowuzzler.svelte-czft6b a.svelte-czft6b:visited {
+  color: currentColor;
+  text-decoration: none;
+}
+.wuzzln.svelte-czft6b.svelte-czft6b {
+  color: rgb(0, 0, 0);
+  font-weight: 500; 
+  font-size: 1.3rem;
+  font-family: Philosopher
+}
+.beta.svelte-czft6b.svelte-czft6b {
+  text-transform: uppercase;
+  background-color: #fff;
+  padding: 0.1em 0.25em;
+  display: inline-flex;
+  margin-top: 0.5rem;
+  border-radius: 3px;
+  line-height: 1.3;
+  font-size: initial;
+  color: initial;
+  position: absolute;
+  left: calc(100% + 1rem);
+  top: -0.5rem;
+}
+.autowuzzler.svelte-czft6b.svelte-czft6b,
+.wuzzln.svelte-czft6b.svelte-czft6b,
+.beta.svelte-czft6b.svelte-czft6b {
+  transform: rotate(-3deg);
+}
+.layout.svelte-czft6b .primary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  transform: translateY(-50%);
+}
+@media screen and (max-width: 800px) {
+  .layout.svelte-czft6b .primary-actions {
+    flex-direction: column;
+    transform: none;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+.layout.svelte-czft6b .primary-actions .button {
+  display: block;
+  font-size: 1.8rem;
+}
+@media screen and (max-width: 800px) {
+  .layout.svelte-czft6b .primary-actions .button {
+    font-size: 1.5rem;
+  }
+}
+main.svelte-czft6b.svelte-czft6b {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1rem 1rem 3rem;
+}
+main.center.svelte-czft6b.svelte-czft6b {
+  text-align: center;
+}

@@ -1,0 +1,102 @@
+:root {
+  --primary: rgb(36, 3, 3);
+  --primary-hover: rgb(55, 9, 9);
+  --secondary-button: rgb(6, 6, 6);
+  --secondary-button-hover: hsl(266deg 100% 90%);
+  --dark: #1b1b1b;
+  --borderradius: 0.25em;
+  --dim-background: rgba(0, 0, 0, 0.4);
+  --team-red: rgb(189, 0, 0);
+  --team-blue: rgb(30, 14, 208);
+}
+html {
+  height: 100%;
+}
+body {
+  font-family: Philosopher;
+  font-size: 16px;
+  padding: 0;
+  margin: 0;
+  min-height: 100%;
+}
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+}
+input,
+button,
+select {
+  font-family: inherit;
+}
+.flow * + * {
+  margin-top: 1rem;
+}
+p {
+  margin-top: 0;
+  margin-bottom: 0.7em;
+}
+p,
+ul,
+ol {
+  line-height: 170%;
+}
+a {
+  color: var(--primary);
+}
+a:hover {
+  color: var(--dark);
+}
+.button {
+  padding: 0.5em 1.2em;
+  border: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  background-color: var(--primary);
+  color: #fff;
+  font-weight: 200;
+  font-size: 1rem;
+  font-family: Philosophy;
+  border-radius: var(--borderradius);
+  text-decoration: none;
+  box-shadow: 0 0 1em -0.3em #00000080;
+  transition: box-shadow 80ms;
+}
+.button:hover {
+  box-shadow: 0 0 1em -0.3em #000c;
+  background-color: var(--primary-hover);
+  color: #fff;
+}
+.button--secondary {
+  background-color: var(--secondary-button);
+  color: var(--dark);
+  box-shadow: none;
+}
+.button--secondary:hover {
+  box-shadow: none;
+  background-color: var(--secondary-button-hover);
+  color: var(--dark);
+}
+.button--small {
+  font-size: 0.8rem;
+}
+input {
+  border: 1px solid #333;
+  font-size: 1rem;
+  padding: 0.6em 1em;
+  border-radius: var(--borderradius);
+}
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.dim-background {
+  background-color: var(--dim-background);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 98;
+}

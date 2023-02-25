@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<!-- saved from url=(0035)https://www.autowuzzler.com/create/ -->
+<html lang="en">
+  <head>
+    <meta
+      http-equiv="Content-Type"
+      content="text/html;"
+			charset="UTF-8"
+    />
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://www.autowuzzler.com/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="https://www.autowuzzler.com/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="https://www.autowuzzler.com/favicon/favicon-16x16.png"
+    />
+
+    <link
+      rel="icon"
+      href="https://www.autowuzzler.com/favicon/favicon.ico"
+      sizes="any"
+    />
+    <meta name="theme-color" content="#24594B" />
+    <meta
+      property="og:image"
+      content="https://www.autowuzzler.com/1500x500.jpg"
+    /> -->
+    <meta property="og:image:alt" content="Autowuzzler" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:url" content="https://www.autowuzzler.com/" />
+    <link rel="canonical" href="https://www.autowuzzler.com/" />
+    <script type="text/javascript" src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
+    <!-- <script type="text/typescript" src="../../backend/rooms/schema/DyingMessageRoomState.ts"></script> -->
+
+    <!-- <link
+      rel="modulepreload"
+      href="https://www.autowuzzler.com/_app/start-6ef19f68.js"
+    />
+    <link
+      rel="modulepreload"
+      href="https://www.autowuzzler.com/_app/chunks/vendor-437948e4.js"
+    />
+    <link
+      rel="modulepreload"
+      href="https://www.autowuzzler.com/_app/chunks/preload-helper-ec9aa979.js"
+    />
+    <link
+      rel="modulepreload"
+      href="https://www.autowuzzler.com/_app/chunks/singletons-12a22614.js"
+    />
+    <link
+      rel="modulepreload"
+      href="https://www.autowuzzler.com/_app/pages/__layout.svelte-74dc8aaa.js"
+    />
+    <link
+      rel="modulepreload"
+      href="https://www.autowuzzler.com/_app/pages/create.svelte-8500cf00.js"
+    />
+    <link
+      rel="modulepreload"
+      href="https://www.autowuzzler.com/_app/chunks/HeroLayout-753e706e.js"
+    /> -->
+    <link rel="stylesheet" href="../create_files/start-61d1577b.css">
+    <link rel="stylesheet" href="../create_files/__layout.svelte-c8d5603a.css">
+    <link rel="stylesheet" href="../create_files/create.svelte-efd9609b.css">
+    <link rel="stylesheet" href="../create_files/HeroLayout-1dd73454.css">
+    <!-- <link rel="modulepreload" href="../../backend/rooms/schema/DyingMessageRoomState"> -->
+    <!-- <script type="text/javascript">
+      import { start } from 'start-6ef19f68.js'
+      start({
+        target: document.querySelector('#svelte'),
+        paths: { base: '', assets: '' },
+        session: {},
+        host: location.host,
+        route: true,
+        spa: false,
+        trailing_slash: 'never',
+        hydrate: {
+          status: 200,
+          error: null,
+          nodes: [
+            import('/../pages/__layout.svelte-74dc8aaa.js'),
+            import('/../pages/create.svelte-8500cf00.js'),
+          ],
+          page: {
+            host: location.host, // TODO this is redundant
+            path: '/create',
+            query: new URLSearchParams(''),
+            params: {},
+          },
+        },
+      })
+    </script> -->
+    <!-- <link
+      rel="modulepreload"
+      as="script"
+      crossorigin=""
+      href="https://www.autowuzzler.com/_app/error.svelte-08cedea3.js"
+    /> -->
+  </head>
+
+  <body tabindex="-1">
+    <div id="svelte">
+      <div class="layout svelte-czft6b">
+        <header class="hero svelte-czft6b">
+          <div class="title-wrapper svelte-czft6b">
+            <h1 class="autowuzzler svelte-czft6b">
+              <a href="https://www.autowuzzler.com/" class="svelte-czft6b">
+                Dying Message
+              </a>
+              <div class="beta svelte-czft6b">Beta</div>
+            </h1>
+            <div class="wuzzln svelte-czft6b">
+              <i>The final clues left by the dead novelist</i>
+            </div>
+          </div>
+        </header>
+        <main class="flow svelte-czft6b center">
+          <h1>Start a new Game</h1>
+          <div>Your PIN:</div>
+          <div class="pin svelte-1tb2i87"><div id="pin"></div></div>
+          <label>
+            <input id="copy" type="button" class="button button--secondary button--small" />
+            <span>Copy PIN</span>
+          </label>
+          <!-- <button onclick="copyPin()" type="button" class="button button--secondary button--small">
+            Copy PIN
+          </button> -->
+          <hr class="short svelte-1tb2i87" />
+          <div class="flex svelte-1tb2i87">
+            <div class="left flow svelte-1tb2i87">
+              <p>Share this link for others to join:</p>
+              <input type="text" class="link-input svelte-1tb2i87" />
+              <button
+                type="button"
+                class="button button--secondary button--small"
+              >
+                Copy link
+              </button>
+            </div>
+            <div class="right svelte-1tb2i87">
+              <p>Or start playing:</p>
+              <div id="play"></div>
+            </div>
+          </div>
+        </main>
+        <footer class="svelte-1tx3p8b">
+          <div class="inner flow svelte-1tx3p8b">
+            <div>
+              Autowuzzler © 2023, a game by
+              <a
+                href="https://grooovinger.com/"
+                rel="noopener"
+                class="svelte-1tx3p8b"
+              >
+                grooovinger
+              </a>
+            </div>
+            <div>💚 Thanks for playing, spread the word!</div>
+            <div>
+              Follow
+              <a href="https://twitter.com/autowuzzler" class="svelte-1tx3p8b">
+                @autowuzzler
+              </a>
+              and
+              <a href="https://twitter.com/mgrubinger" class="svelte-1tx3p8b">
+                @mgrubinger
+              </a>
+              on twitter
+            </div>
+            <div>
+              <a
+                href="https://www.autowuzzler.com/legal"
+                class="svelte-1tx3p8b"
+              >
+                Legal
+              </a>
+            </div>
+          </div>
+        </footer>
+      </div>
+      <div
+        id="svelte-announcer"
+        aria-live="assertive"
+        aria-atomic="true"
+        class="svelte-1j55zn5"
+      ></div>
+    </div>
+    <!-- <script type="text/typescript">
+      import {Client, Room} from "colyseus.js";
+      const client = new Client('ws://localhost:2567');// + port.toString());
+      var room:Room = null;
+      try {
+          room = await client.create("battle", {/* options */});
+          console.log("joined successfully", room);
+      } catch (e) {
+          console.error("join error", e);
+      }
+      const pin = room.id;
+      console.log(pin)
+      var el = document.createElement('div');
+      el.textContent = pin;
+      el.style.fontFamily = "Satire";
+      var pinEl = document.getElementById('pin');
+      pinEl.appendChild(el);
+      const queryCopyButton = () => <HTMLDivElement>document.querySelector("#copy");
+      const copyButton = queryCopyButton();
+      copyButton.addEventListener("click", () => {
+          copyPin();
+      });
+      function copyPin() {
+          // Get the text field
+          var copyText = document.getElementById("copy_pin");
+        
+          // Copy the text inside the text field
+          navigator.clipboard.writeText(pin);
+        
+          // Alert the copied text
+          alert("Copied the text: " + pin);
+      }
+    </script> -->
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script type="text/typescript" src="htmls/create.ts"></script>
+    <!-- <script type="text/typescript" src="htmls/play2.ts"></script> -->
+
+    <script src="../js/typescript.min.js" type="text/javascript"></script>
+    <script src="../js/typescript.compile.min.js" type="text/javascript"></script>
+  </body>
+</html>
