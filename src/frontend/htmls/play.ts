@@ -1,3 +1,5 @@
+import { READY } from "./readystate";
+
 function checknickname(nickname:String): boolean {
     return true;
 }
@@ -33,8 +35,8 @@ function askNickname(room:Room) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     const client = new Colyseus.Client('ws://localhost:2567');// + port.toString());
-    var readyModal = document.getElementById("ready-modal-content")
-
+    var readyModal = document.getElementById("ready-modal-content");
+    console.log("ready mod");
     client.joinById(roomId, {host:false}).then(room => {
         console.log("Room already exists");
         askNickname(room);
@@ -77,9 +79,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else if (newState.phase === 1) {
                     el.className = "button";
                     el.onclick = () => {
+                        room.send("ready", READY);
                         readyModal.style.display = "none";
                     }
                 } else if (newState.phase === 2) {
+                    var compCards = document.querySelector("#compCards");
+                    var i = 0;
+                    newState.components.forEach(([category, component]) => {
+                        var label = document.createElement("div");
+                        label.textContent = category;
+                        label.style.left = 416.5 + "px";
+                        label.style.top = 150+i*(844-150)/newState.DEFAULT_COMPONENTS.length + "px";
+                        compCards.appendChild(label);
+                        var j = 0;
+                        component.options.forEach((option) => {
+                            var card = document.createElement("div");
+                            card.textContent = option.value;
+                            label.style.left = 416.5 + j*(1200-416.5)/newState.DEFAULT_OPTIONS + "px";
+                            label.style.top = 150+i*(844-150)/newState.DEFAULT_COMPONENTS.length + "px";
+                            compCards.appendChild(card);
+                            j++;
+                        })
+                        i++;
+                    });
                 }
                 readyModal.appendChild(el);
                 
