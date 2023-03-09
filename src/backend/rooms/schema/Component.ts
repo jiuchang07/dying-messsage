@@ -32,11 +32,19 @@ export class Component extends Schema {
         // }
         var num:number = numOptions; 
         var i:number; 
+        var valuesSoFar:string[] = [];
         for (i = num;i>=1;i--) {
             if (value == "motives") {
+                var option = getRandomMotives();
+                while (valuesSoFar.includes(option.value)) {
+                    option = getRandomMotives();
+                } 
                 this.options.push(getRandomMotives());
             } else if (value == "occupations") {
-
+                var option = getRandomOccupations();
+                while (valuesSoFar.includes(option.value)) {
+                    option = getRandomOccupations();
+                } 
                 this.options.push(getRandomOccupations());
             }
         }
