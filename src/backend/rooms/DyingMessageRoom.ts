@@ -113,13 +113,22 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     });
 
     this.onMessage("ready", (client, message: ReadyState) => {
-      console.log("received ready message");
+      console.log("received ready message", this.state.phase);
       if (this.playerMap.has(client.id)) {
+<<<<<<< HEAD
           var player = this.playerMap.get(client.id);
           if (player.isHost && message.isReady) {
             this.state.phase = 2;
           }
           player.isReady = message.isReady;
+=======
+          var player = this.playerMap.get(client.id)
+          player.isReady = message.isReady;
+          if (player.isHost && player.isReady) {
+            this.state.phase = 2;
+            return;
+          }
+>>>>>>> 9b3cbf377fc41e912610bcb460371f14895e1cf9
       }
       if (this.allPlayersReady()) {
           console.log("All players ready");
