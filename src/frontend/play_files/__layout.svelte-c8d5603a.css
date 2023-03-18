@@ -177,6 +177,131 @@ a:hover {
   z-index: 1;
 }
 
+/* create all classes referenced in ../htmls/play.ts but not created here */
+.adj-options {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.noun-options {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.adj-options .button {
+  margin: 0.5em;
+}
+.noun-options .button {
+  margin: 0.5em;
+}
+.lives {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.guesses {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.components {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.adj-options-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.5em;
+}
+.noun-options-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.5em;
+}
+.lives-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.5em;
+}
+.guesses-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.5em;
+}
+.components-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.5em;
+}
+.adj-options-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.noun-options-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.lives-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.guesses-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.components-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.noun-option {
+  margin: 0.5em;
+}
+.adj-option {
+  margin: 0.5em;
+}
+.life {
+  margin: 0.5em;
+}
+.guess {
+  margin: 0.5em;
+}
+
 /* Modal Content/Box */
 .modal-content {
   font-style: Satire;
