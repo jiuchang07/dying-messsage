@@ -10,8 +10,8 @@ const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   private DEFAULT_LIFE = 4;
-  private DEFAULT_COMPONENTS = ["motives", "occupations"]
-  private DEFAULT_OPTIONS = 8;
+  public DEFAULT_COMPONENTS = ["motives", "occupations"]
+  public DEFAULT_OPTIONS = 8;
   private DEFAULT_ROUNDS = 3;
   private DEFAULT_INITIAL_HINT_OPTIONS = 6; // Default number of adjectives and nouns to draw at setup
   private DEFAULT_INITIAL_HINTS = 3; // Default number of adjectives and nouns to give at setup

@@ -1,3 +1,5 @@
+import { READY } from "./readystate";
+
 function checknickname(nickname:String): boolean {
     return true;
 }
@@ -171,11 +173,56 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         readyModal.appendChild(el);
-        room.onStateChange((newState: GameState) => {
-            if (newState.phase === 2) {
-                readyModal.style.display = "none";
-            }
-        
+    }).catch(e => {
+        client.create("dying_message", {roomId: roomId, host:true}).then(room => {
+            askNickname(room);
+            readyModal.style.display = "block";
+            var el = document.createElement('div');
+            el.className = "button";
+            el.textContent = "Game Start";
+            room.onStateChange((newState: GameState) => {
+                // var text = "Players/n" + newState.players.values();
+                // room.playerMap.values().forEach(player => {
+                //     text += (player.nickname+"/n");
+                    
+                // });
+                // var textel = document.createElement('div')
+                // textel.textContent = text;
+                // readyModal.appendChild(textel);
+                if (newState.phase === 0) {
+                    el.className = "button button--secondary";
+                    el.onclick = () => {};
+                    
+                } else if (newState.phase === 1) {
+                    el.className = "button";
+                    el.onclick = () => {
+                        room.send("ready", READY);
+                        readyModal.style.display = "none";
+                    }
+                } else if (newState.phase === 2) {
+                    var compCards = document.querySelector("#compCards");
+                    var i = 0;
+                    newState.components.forEach(([category, component]) => {
+                        var label = document.createElement("div");
+                        label.textContent = category;
+                        label.style.left = 416.5 + "px";
+                        label.style.top = 150+i*(844-150)/newState.DEFAULT_COMPONENTS.length + "px";
+                        compCards.appendChild(label);
+                        var j = 0;
+                        component.options.forEach((option) => {
+                            var card = document.createElement("div");
+                            card.textContent = option.value;
+                            label.style.left = 416.5 + j*(1200-416.5)/newState.DEFAULT_OPTIONS + "px";
+                            label.style.top = 150+i*(844-150)/newState.DEFAULT_COMPONENTS.length + "px";
+                            compCards.appendChild(card);
+                            j++;
+                        })
+                        i++;
+                    });
+                }
+                readyModal.appendChild(el);
+                
+            });
         });
     );
 }).catch(e => {
