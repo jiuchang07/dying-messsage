@@ -185,26 +185,31 @@ function drawGameboard(newState: GameState, room: Room) {
 document.addEventListener('DOMContentLoaded', async () => {
     const client = new Colyseus.Client('ws://localhost:2567');// + port.toString());
     var readyModalContent = document.getElementById("ready-modal")
-
-    client.joinById(roomId, {host:false}).then(room => {
-        askNickname(room);
-        setReadyModal(room, false);
-        return room;
-    }).catch(e => {
-        client.create("dying_message", {roomId: roomId, host:true}).then(room => {
-            askNickname(room);
-            setReadyModal(room, true);
-            return room;
-        })
-        return "error";
-    }).then(room => {
+    try {
+        const room = await client.joinById(roomId, {host:false});
+    } catch (e) {
+        const room = await client.create("dying_message", {roomId: roomId, host:true});
+    } 
+    console.log(room);
+    // client.joinById(roomId, {host:false}).then(room => {
+    //     askNickname(room);
+    //     setReadyModal(room, false);
+    //     return room;
+    // }).catch(e => {
+    //     client.create("dying_message", {roomId: roomId, host:true}).then(room => {
+    //         askNickname(room);
+    //         setReadyModal(room, true);
+    //         return room;
+    //     })
+    //     return "error";
+    // }).then(room => {
     
-        // console.log("room");
-        console.log(room);
-        // room.onStateChange((newState: GameState) => {
-        //     if (newState.phase === 2) {
-        //         drawGameboard(newState, room)
-        //     }
-        // });
-    });
+    //     // console.log("room");
+    //     console.log(room);
+    //     // room.onStateChange((newState: GameState) => {
+    //     //     if (newState.phase === 2) {
+    //     //         drawGameboard(newState, room)
+    //     //     }
+    //     // });
+    // });
 });
