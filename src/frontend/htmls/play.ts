@@ -42,7 +42,7 @@ function askNickname(room:Room) {
     3. the number of lives left 
     4. the number of guesses left.
 */
-function drawGameboard(room: Room, newState: GameState) {
+function drawGameboard(newState: GameState, room: Room) {
     var gameboard = document.getElementById("gameboard");
     gameboard.innerHTML = "";
     var adjOptions = document.createElement("div");
@@ -153,9 +153,10 @@ function drawGameboard(room: Room, newState: GameState) {
 document.addEventListener('DOMContentLoaded', async () => {
     const client = new Colyseus.Client('ws://localhost:2567');// + port.toString());
     var readyModal = document.getElementById("ready-modal")
-    var readyModalContent = document.getElementById("ready-modal-content")
+    var readyModalContent = document.getElementById("ready-modal")
 
     client.joinById(roomId, {host:false}).then(room => {
+        console.log("Room already exists");
         askNickname(room);
         readyModal.style.display = "block";
         var el = document.createElement('div');
@@ -173,43 +174,36 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         readyModal.appendChild(el);
+}).catch(e => {
+    client.create("dying_message", {roomId: roomId, host:true}).then(room => {
+        askNickname(room);
+        readyModal.style.display = "block";
+        var el = document.createElement('div');
+        el.className = "button";
+        el.textContent = "Game Start";
         room.onStateChange((newState: GameState) => {
-            if (newState.phase === 2) {
-                console.log("game over");
-                drawGameboard(room, newState);
-            }
-    }).catch(e => {
-        client.create("dying_message", {roomId: roomId, host:true}).then(room => {
-            askNickname(room);
-            readyModal.style.display = "block";
-            var el = document.createElement('div');
-            el.className = "button";
-            el.textContent = "Game Start";
-            room.onStateChange((newState: GameState) => {
-                // var text = "Players/n" + newState.players.values();
-                // room.playerMap.values().forEach(player => {
-                //     text += (player.nickname+"/n");
-                    
-                // });
-                // var textel = document.createElement('div')
-                // textel.textContent = text;
-                // readyModal.appendChild(textel);
-                if (newState.phase === 0) {
-                    el.className = "button button--secondary";
-                    el.onclick = () => {};
-                    
-                } else if (newState.phase === 1) {
-                    el.className = "button";
-                    el.onclick = () => {
-                        room.send("ready", READY);
-                        readyModal.style.display = "none";
-                    }
-                } else if (newState.phase === 2) {
-                    drawGameboard(room, newState);
-                }
-                readyModal.appendChild(el);
+            // var text = "Players/n" + newState.players.values();
+            // room.playerMap.values().forEach(player => {
+            //     text += (player.nickname+"/n");
                 
-            });
+            // });
+            // var textel = document.createElement('div')
+            // textel.textContent = text;
+            // readyModal.appendChild(textel);
+            if (newState.phase === 0) {
+                el.className = "button button--secondary";
+                el.onclick = () => {};
+            } else if (newState.phase === 1) {
+                el.className = "button";
+                el.onclick = () => {
+                    room.send("ready", READY);
+                    readyModal.style.display = "none";
+                }
+            } else if (newState.phase === 2) {
+                drawGameboard(newState, room)
+            }
+            readyModal.appendChild(el);
         });
-    );
+    });
+});
 });
