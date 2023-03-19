@@ -114,7 +114,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
 
     this.onMessage("ready", (client, message: ReadyState) => {
       console.log("received ready message", this.state.phase);
-      if (this.playerMap.has(client.id)) {
+      if (this.playerMap.has(client.id)) { 
           var player = this.playerMap.get(client.id)
           player.isReady = message.isReady;
           if (player.isHost && player.isReady) {
