@@ -156,7 +156,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     var readyModalContent = document.getElementById("ready-modal-content")
 
     client.joinById(roomId, {host:false}).then(room => {
-        console.log("Room already exists");
         askNickname(room);
         readyModal.style.display = "block";
         var el = document.createElement('div');
@@ -174,6 +173,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         readyModal.appendChild(el);
+        room.onStateChange((newState: GameState) => {
+            if (newState.phase === 2) {
+                console.log("game over");
+                drawGameboard(room, newState);
+            }
     }).catch(e => {
         client.create("dying_message", {roomId: roomId, host:true}).then(room => {
             askNickname(room);

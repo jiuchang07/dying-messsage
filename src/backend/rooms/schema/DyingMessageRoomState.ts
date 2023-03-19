@@ -50,7 +50,7 @@ export class DyingMessageRoomState extends Schema {
     initial_hint_options: number,
     initial_hints: number,
     draw_hints: number,
-    round_hints: number
+    round_hints: number 
   ) {
     super();
     components.forEach(c => {this.components.set(c, new Component(c, options))})
