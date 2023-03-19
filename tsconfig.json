@@ -12,6 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",
     "moduleResolution": "node",
+    "noEmitHelpers": false,
   },
   "include": [
     "src"

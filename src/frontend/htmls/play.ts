@@ -195,15 +195,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             askNickname(room);
             setReadyModal(room, true);
             return room;
-        });
+        })
+        return "error";
     }).then(room => {
     
-        console.log("room");
+        // console.log("room");
         console.log(room);
-    // room.onStateChange((newState: GameState) => {
-    //     if (newState.phase === 2) {
-    //         drawGameboard(newState, room)
-    //     }
-    // });
+        // room.onStateChange((newState: GameState) => {
+        //     if (newState.phase === 2) {
+        //         drawGameboard(newState, room)
+        //     }
+        // });
     });
 });
