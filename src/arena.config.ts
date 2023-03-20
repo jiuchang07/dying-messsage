@@ -6,6 +6,7 @@ import serveStatic from 'serve-static';
 import { Router } from "express";
 import cors from "cors";
 import {Server} from "colyseus";
+import serveIndex from 'serve-index';
 
 
 
@@ -38,6 +39,8 @@ export default Arena({
          */
         app.use(cors());
         app.use(express.json());
+        app.use('/', serveIndex(path.join(__dirname, "/frontend/htmls/index.html"), {'icons': true}))
+        // app.use('/', serveIndex(path.join(__dirname, "/frontend/htmls/play"), {'icons': true}))
         app.use(express.static(__dirname + '/frontend' ));
         // app.engine('.html', require('ejs').__express);
         app.set('view engine', 'ejs')
@@ -46,14 +49,14 @@ export default Arena({
         // app.use(express.static('c:/Jiu Chang/dying-message-ts/node_modules' ));
         // app.use(express.static(__dirname + '/frontend/Autowuzzler_files' ));
 
-        app.get("/", (req, res) => {
-            res.sendFile(__dirname + "/frontend/htmls/index.html");
-        });
-        app.get("/create", (req, res) => {
-            // const client = new Client('ws://localhost:2567');
-            // res.send(client.auth)
-            res.sendFile(__dirname + "/frontend/htmls/create.html");
-        });
+        // app.get("/", (req, res) => {
+        //     res.sendFile(__dirname + "/frontend/htmls/index.html");
+        // });
+        // app.get("/create", (req, res) => {
+        //     // const client = new Client('ws://localhost:2567');
+        //     // res.send(client.auth)
+        //     res.sendFile(__dirname + "/frontend/htmls/create.html");
+        // });
         app.get("/join", (req, res) => {
             res.sendFile(__dirname + "/frontend/htmls/join.html");
         });

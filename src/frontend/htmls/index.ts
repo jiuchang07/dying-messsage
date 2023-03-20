@@ -51,6 +51,8 @@ function copyPin(pin:string) {
 }
 document.addEventListener('DOMContentLoaded', async () => {
     const client = new Colyseus.Client('ws://localhost:2567');// + port.toString());
+    const room = await client.create("dying_message");
+    console.log(room);
     var pin:string = generateRoomId(client);
     // var el = document.createElement('div');
     // el.textContent = pin;
