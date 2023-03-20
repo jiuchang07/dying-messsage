@@ -47,7 +47,6 @@ function setReadyModal(room:Room, host:boolean) {
                 el.className = "button";
                 el.addEventListener("click", () => {
                     room.send("ready", READY);
-                    readyModal.style.display = "none";
                 });
             }
         });
@@ -65,9 +64,13 @@ function setReadyModal(room:Room, host:boolean) {
             }
         }
     }
-
-
+    room.onStateChange((newState: GameState) => {
+        if (newState.phase === 2) {
+            readyModal.style.display = "none";
+        }
+    });
 }
+
 /*
     This function draws a gameboard displaying 
     1. all options for each component in newState.components which is a dictionary 
@@ -191,20 +194,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         setReadyModal(room, false);
         return room;
     }).catch(e => {
-        client.create("dying_message", {roomId: roomId, host:true}).then(room => {
+        const room = client.create("dying_message", {roomId: roomId, host:true}).then(room => {
             askNickname(room);
             setReadyModal(room, true);
             return room;
         })
-        return "error";
+        return room;
     }).then(room => {
-    
-        // console.log("room");
-        console.log(room);
-        // room.onStateChange((newState: GameState) => {
-        //     if (newState.phase === 2) {
-        //         drawGameboard(newState, room)
-        //     }
-        // });
+        room.onStateChange((newState: GameState) => {
+            if (newState.phase === 2) {
+                drawGameboard(newState, room)
+            }
+        });
     });
 });
