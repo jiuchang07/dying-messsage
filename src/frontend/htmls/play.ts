@@ -122,7 +122,7 @@ function drawGameboard(newState: GameState, room: Room) {
     newState.adjOptions.forEach(adj => {
         var adjOption = document.createElement("div");
         adjOption.className = "adj-option";
-        adjOption.textContent = adj;
+        adjOption.textContent = adj.value;
         adjOption.onclick = () => {
             room.send("adjOption", adj);
         }
@@ -131,41 +131,42 @@ function drawGameboard(newState: GameState, room: Room) {
     newState.nounOptions.forEach(noun => {
         var nounOption = document.createElement("div");
         nounOption.className = "noun-option";
-        nounOption.textContent = noun;
+        nounOption.textContent = noun.value;
 
         nounOption.onclick = () => {
             room.send("nounOption", noun);
         }
         nounOptionsList.appendChild(nounOption);
     });
-    // for (var key in newState.components) {
-    //     var component = document.createElement("div");
-    //     component.className = "component";
-    //     var componentTitle = document.createElement("div");
-    //     componentTitle.className = "component-title";
-    //     componentTitle.textContent = key;
-    //     component.appendChild(componentTitle);
-    //     newState.components[key].options.forEach(option => {
-    //         var optionDiv = document.createElement("div");
-    //         optionDiv.className = "option";
-    //         optionDiv.textContent = option;
-    //         optionDiv.onclick = () => {
-    //             room.send("componentOption", {component: key, option: option});
-    //         }
-    //         component.appendChild(optionDiv);
-    //     });
-    //     componentsList.appendChild(component);
-    // }
-    for (var i = 0; i < newState.lives; i++) {
+    console.log(newState.components.entries().keys);
+    newState.components.forEach((comp, key) => {
+        var component = document.createElement("div");
+        component.className = "component";
+        var componentTitle = document.createElement("div");
+        componentTitle.className = "component-title";
+        componentTitle.textContent = key;
+        component.appendChild(componentTitle);
+        comp.options.forEach(option => {
+            var optionDiv = document.createElement("div");
+            optionDiv.className = "option";
+            optionDiv.textContent = option.value;
+            optionDiv.onclick = () => {
+                room.send("componentOption", {component: key, option: option});
+            }
+            component.appendChild(optionDiv);
+        });
+        componentsList.appendChild(component);
+    });
+    for (var i = 0; i < newState.life; i++) {
         var life = document.createElement("div");
         life.className = "life";
-        life.textContent = "♥";
+        life.textContent = "<3";
         livesList.appendChild(life);
     }
-    for (var i = 0; i < newState.guesses; i++) {
+    for (var i = 0; i < newState.remaining_guesses; i++) {
         var guess = document.createElement("div");
         guess.className = "guess";
-        guess.textContent = "✎";
+        guess.textContent = "<?>";
         guessesList.appendChild(guess);
     }
     adjOptions.appendChild(adjOptionsTitle);

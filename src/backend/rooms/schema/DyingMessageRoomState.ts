@@ -39,6 +39,9 @@ export class DyingMessageRoomState extends Schema {
   @type([ Guess ])
   guesses: ArraySchema<Guess>;
 
+  @type("number")
+  remaining_guesses: number;
+
   @type({ map: "string" }) 
   players: MapSchema<string>;
 
@@ -50,10 +53,12 @@ export class DyingMessageRoomState extends Schema {
     initial_hint_options: number,
     initial_hints: number,
     draw_hints: number,
-    round_hints: number 
+    round_hints: number,
+    numGuesses: number,
   ) {
     super();
     components.forEach(c => {this.components.set(c, new Component(c, options))})
+    console.log("components: ", this.components["motives"].options);
     this.life = life;
     var num:number = initial_hint_options; 
     var i:number; 
@@ -67,11 +72,12 @@ export class DyingMessageRoomState extends Schema {
     this.phase = 0;
     this.outcome = null;
     this.currentTurn = null;
-    this.initializeGuesses();
+    this.initializeGuesses(numGuesses);
     this.players = new MapSchema<string>();
   }
 
-  public initializeGuesses() {
+  public initializeGuesses(numGuesses: number) {
     this.guesses = new ArraySchema<Guess>();
+    this.remaining_guesses = numGuesses;
   }
 }
