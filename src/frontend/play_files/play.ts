@@ -1,5 +1,5 @@
 import {Client, Room} from "colyseus.js";
-import { Player } from "../../backend/rooms/Player";
+import { Player } from "../../backend/rooms/schema/Player";
 import {DyingMessageRoomState} from "../../backend/rooms/schema/DyingMessageRoomState";
 import {READY, NOT_READY} from "../htmls/readystate";
 

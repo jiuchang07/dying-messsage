@@ -224,6 +224,12 @@ a:hover {
   align-items: center;
   align-content: center;
 }
+.guess-button {
+  margin: 0.5em;
+}
+.option--solution {
+  font-style: italic;
+}
 .adj-options-title {
   font-size: 1.5em;
   font-weight: 600;

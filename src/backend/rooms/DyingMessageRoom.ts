@@ -1,6 +1,6 @@
 import { Room, Delayed, Client } from "colyseus";
 import { DyingMessageRoomState } from "./schema/DyingMessageRoomState";
-import { Player } from "./Player";
+import { Player } from "./schema/Player";
 import {ReadyState, NOT_READY, READY} from "../../frontend/htmls/readystate";
 import { Hint } from "./schema/Hint";
 import { Component } from "./schema/Component";
@@ -19,14 +19,13 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   private DEFAULT_DRAW_HINTS = 1; // Default number of adjectives and nouns to draw on each round
   private DEFAULT_ROUND_HINTS = 1; // Default number of total hints to give on each round
 
-  private playerMap: Map<string, Player>;
+  public playerMap: Map<string, Player>;
 
   private gameLoop!: Delayed;
 
 
   constructor() {
       super();
-      this.playerMap = new Map<string, Player>();
   }
 
 	public presence: any;
@@ -59,10 +58,9 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   }
 
   private allPlayersReady(): boolean {
-    for (const player of this.playerMap.values()) {
+    for (const player of this.state.playerMap.values()) {
         if (player.isReady === false) {
             if (player.isHost === false) {
-              console.log(player)
               return false;
             }
         }
@@ -71,24 +69,22 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   }
 
   private assignRoles(): boolean {
-    if (this.playerMap.size <= 1) {
+    if (this.state.playerMap.size <= 1) {
       console.log("Two or more player have to join the game!");
       return false;
     }
-    var novelistIdx:number = Math.floor(Math.random() * this.playerMap.size);
-    var novelistID:string = Array.from(this.playerMap.keys())[novelistIdx];
-    this.playerMap.get(novelistID).type = true;
+    var novelistIdx:number = Math.floor(Math.random() * this.state.playerMap.size);
+    var novelistID:string = Array.from(this.state.playerMap.keys())[novelistIdx];
+    this.state.playerMap.get(novelistID).isNovelist = true;
     return true;
   }
 
   private startGame() {
-    this.state.currentTurn = true;
     
   }
 
   private checkGameOver() {
     if (this.state.life == 0) {
-      this.state.outcome = false;
       this.state.phase = 0;
     }
   }
@@ -110,14 +106,13 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     // console.log("Room ID: " + this.roomId);
 
     this.onMessage("nickname", (client, message: String) => {
-      this.playerMap.get(client.id).nickname = message.nickname;
+      this.state.playerMap.get(client.id).nickname = message.nickname;
       // this.state.players.set(client.id, message.nickname);
     });
 
     this.onMessage("ready", (client, message: ReadyState) => {
-      console.log("received ready message", this.state.phase);
-      if (this.playerMap.has(client.id)) { 
-          var player = this.playerMap.get(client.id)
+      if (this.state.playerMap.has(client.id)) { 
+          var player = this.state.playerMap.get(client.id)
           player.isReady = message.isReady;
           if (player.isHost && player.isReady) {
             this.state.phase = 2;
@@ -128,7 +123,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
           console.log("All players ready");
           if (this.assignRoles()) {
             this.state.phase = 1;
-            // this.startGame();
+            this.startGame();
 
             // this.startGameLoop();
           }
@@ -138,7 +133,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     });
 
     this.onMessage("hint", (client, message: {c: string, h: Hint}) => {
-      if (this.playerMap.has(client.id) && this.playerMap.get(client.id).isNovelist()) {
+      if (this.state.playerMap.has(client.id) && this.state.playerMap.get(client.id).isNovelist()) {
         if (this.state.phase == 1) {
           if (message.h.type == "adjective") {
             var component = this.state.components.get(message.c);
@@ -173,7 +168,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     });
 
     this.onMessage("guess", (client, message:Option) => {
-      if (this.playerMap.has(client.id) && this.playerMap.get(client.id).isDetective()) {
+      if (this.state.playerMap.has(client.id) && this.state.playerMap.get(client.id).isDetective()) {
         if (this.state.phase == 2) {
           this.state.guesses.push(new Guess(true, message));
         } else if (this.state.phase == 4) {
@@ -192,7 +187,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
 
   onJoin (client: Client, options: any) {
     console.log(client.sessionId, "joined!");
-    this.playerMap.set(client.sessionId, new Player(client.sessionId, null, false, false, options["host"]));
+    this.state.playerMap.set(client.sessionId, new Player(client.sessionId, null, false, false, options["host"]));
   }
 
   onLeave (client: Client, consented: boolean) {

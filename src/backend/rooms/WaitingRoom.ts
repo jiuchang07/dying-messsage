@@ -1,6 +1,6 @@
 import { Room, Delayed, Client } from "colyseus";
 import { WaitingRoomState } from "./schema/WaitingRoomState";
-import { Player } from "./Player";
+import { Player } from "./schema/Player";
 import {ReadyState, NOT_READY, READY} from "../../frontend/htmls/readystate";
 import { Hint } from "./schema/Hint";
 import { Component } from "./schema/Component";

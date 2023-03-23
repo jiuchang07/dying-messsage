@@ -3,7 +3,7 @@ import { getRandomAdj, Adjective } from "./Adjective";
 import { getRandomNoun, Noun } from "./Noun";
 import { Component } from "./Component";
 import { Guess } from "./Guess";
-import { Player } from "../Player";
+import { Player } from "./Player";
 
 export class DyingMessageRoomState extends Schema {
 
@@ -32,20 +32,14 @@ export class DyingMessageRoomState extends Schema {
               6: Moment of truth!
   */
 
-  @type("boolean")
-  outcome: boolean
-
-  @type("boolean")
-  currentTurn: boolean
-
   @type([ Guess ])
   guesses: ArraySchema<Guess>;
 
   @type("number")
   remaining_guesses: number;
 
-  @type({ map: "string" }) 
-  players: MapSchema<string>;
+  @type({ map: Player }) 
+  playerMap: MapSchema<Player> = new MapSchema<Player>();
 
   constructor(
     life: number,
@@ -60,7 +54,6 @@ export class DyingMessageRoomState extends Schema {
   ) {
     super();
     components.forEach(c => {this.components.set(c, new Component(c, options))})
-    console.log("components: ", this.components["motives"].options);
     this.life = life;
     var num:number = initial_hint_options; 
     var i:number; 
@@ -72,10 +65,7 @@ export class DyingMessageRoomState extends Schema {
       this.nounOptions.push(getRandomNoun());
     }
     this.phase = 0;
-    this.outcome = null;
-    this.currentTurn = null;
     this.initializeGuesses(numGuesses);
-    this.players = new MapSchema<string>();
   }
 
   public initializeGuesses(numGuesses: number) {

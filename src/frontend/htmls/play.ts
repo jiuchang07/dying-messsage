@@ -8,7 +8,6 @@ function roomExists(client: Client): boolean {
     console.log(rooms);
     rooms.forEach((room) => {
       if (room.roomId == roomId) {
-        console.log("true");
         exists = true;
       }
     });
@@ -137,7 +136,7 @@ function addNounOptions(
 function addComponents(
   newState: GameState,
   room: Room,
-  gameboard: HTMLElement
+  gameboard: HTMLElement,
 ) {
   var componentsList = addHTMLEl(gameboard, "components", "Components");
   newState.components.forEach((comp, key) => {
@@ -152,6 +151,9 @@ function addComponents(
     comp.options.forEach((option) => {
       var optionEl = document.createElement("div");
       optionEl.className = "option";
+      if (option.isSolution && newState.playerMap[room.sessionId].isNovelist) {
+        optionEl.className += " option--solution";
+      }
       optionEl.textContent = option.value;
       optionEl.onclick = () => {
         room.send("option", option);
@@ -161,6 +163,20 @@ function addComponents(
     component.appendChild(componentOptions);
     componentsList.appendChild(component);
   });
+}
+function addGuessButton(newState: GameState, room: Room, gameboard: HTMLElement) {
+  var guessButton = document.createElement("div");
+  guessButton.className = "button guess-button";
+  if (newState.playerMap[room.sessionId].isNovelist) {
+    guessButton.textContent = "Finish giving hints";
+  } else {
+    guessButton.textContent = "Finish guessing";
+  }
+  
+  guessButton.onclick = () => {
+    room.send("finished-turn");
+  };
+  gameboard.appendChild(guessButton);
 }
 
 /*
@@ -179,6 +195,7 @@ function drawGameboard(newState: GameState, room: Room) {
   addAdjOptions(newState, room, gameboard);
   addNounOptions(newState, room, gameboard);
   addComponents(newState, room, gameboard);
+  addGuessButton(newState, room, gameboard);
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -204,7 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     .then((room) => {
       room.onStateChange((newState: GameState) => {
         if (newState.phase === 2) {
-          drawGameboard(newState, room);
+          drawGameboard(newState, room, client);
           
         }
       });
