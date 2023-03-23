@@ -23,11 +23,13 @@ export class DyingMessageRoomState extends Schema {
   phase: number
   /*
   if PHASE =  -1: not running
-              0: 'Game Start' enabled
-              1: Novelist's turn before Round 1
-              2: Detector's turn of each round
-              3: Novelist's turn of each round
-              4: Detector's turn after all rounds
+              0: Not all players ready
+              1: All players ready; 'Game Start' enabled
+              2: 'Game Start' clicked; 'Start Round' enabled; Novelist's turn before Round 1
+              3: Detector's turn of each round
+              4: Novelist's turn of each round
+              5: Detector's turn after all rounds
+              6: Moment of truth!
   */
 
   @type("boolean")
