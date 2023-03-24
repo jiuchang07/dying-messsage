@@ -13,3 +13,11 @@ export abstract class Hint extends Schema {
 
 }
 
+export class NullHint extends Hint {
+    value = "null";
+    constructor() {
+        super();
+        this.type = "null";
+    }
+    
+}

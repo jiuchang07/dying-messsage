@@ -2,10 +2,11 @@ import { Room, Delayed, Client } from "colyseus";
 import { DyingMessageRoomState } from "./schema/DyingMessageRoomState";
 import { Player } from "./schema/Player";
 import {ReadyState, NOT_READY, READY} from "../../frontend/htmls/readystate";
-import { Hint } from "./schema/Hint";
+import { Hint, NullHint } from "./schema/Hint";
 import { Component } from "./schema/Component";
 import { Option } from "./schema/Option";
 import { Guess } from "./schema/Guess";
+import { Adjective } from "./schema/Adjective";
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class DyingMessageRoom extends Room<DyingMessageRoomState> {
@@ -83,9 +84,32 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     
   }
 
+  private startHintMode(hint:string) {
+      this.state.hintMode = this.state.adjOptions.get(hint);
+      if (this.state.hintMode == null) {
+        this.state.hintMode = this.state.nounOptions.get(hint);
+      }
+  }
+
+  // private startNounMode(noun:Noun) {
+  //   this.state.nounMode = noun;
+  // }
+
+  private startGuessMode() {
+    this.state.guessMode = true;
+  }
+
+  private givenAllHints() {
+    this.state.components.forEach((comp, key) => {
+      if (comp.hintAdj.length == 0 || comp.hintNoun.length == 0)
+        return false;
+    });
+    return true;
+  }
+
   private checkGameOver() {
     if (this.state.life == 0) {
-      this.state.phase = 0;
+      this.state.phase = "NOTRUNNING";
     }
   }
 
@@ -101,9 +125,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
       this.DEFAULT_ROUND_HINTS,
       this.DEFAULT_GUESSES
     ));
-    // this.id= options;// options.get("roomId");
-    this.roomId = options["roomId"];// options.get("roomId");
-    // console.log("Room ID: " + this.roomId);
+    this.roomId = options["roomId"];
 
     this.onMessage("nickname", (client, message: String) => {
       this.state.playerMap.get(client.id).nickname = message.nickname;
@@ -115,73 +137,105 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
           var player = this.state.playerMap.get(client.id)
           player.isReady = message.isReady;
           if (player.isHost && player.isReady) {
-            this.state.phase = 2;
+            this.state.phase = "GAMESTART";
             return;
           }
       }
       if (this.allPlayersReady()) {
-          console.log("All players ready");
           if (this.assignRoles()) {
-            this.state.phase = 1;
+            this.state.phase = "ALLREADY";
             this.startGame();
 
             // this.startGameLoop();
           }
       } else {
-          this.state.phase = 0;
+          this.state.phase = "NOTREADY";
       }
     });
 
-    this.onMessage("hint", (client, message: {c: string, h: Hint}) => {
-      if (this.state.playerMap.has(client.id) && this.state.playerMap.get(client.id).isNovelist()) {
-        if (this.state.phase == 1) {
-          if (message.h.type == "adjective") {
-            var component = this.state.components.get(message.c);
+    this.onMessage("start-hint", (client, message: string) => {
+      if (this.state.playerMap.has(client.id) && this.state.playerMap.get(client.id).isNovelist) {
+        this.startHintMode(message);
+      }
+    }); 
+
+    this.onMessage("hint", (client, message: Component) => {
+      console.log("received hint", message.value);
+      if (this.state.playerMap.has(client.id) && this.state.playerMap.get(client.id).isNovelist) {
+        var component = message;
+        if (this.state.phase == "GAMESTART") {
+          if (this.state.hintMode.type == "adjective") {
+            // var component = this.state.components.get(message);
             if (component.hintAdj.length == 1) {
-              console.log("Adjective hint already given to component "+ message.c);
-              return;
+              console.log("Adjective hint already given to component "+ component.value);
             } else {
-              component.setHintAdj(message.h);
+              component.hintAdj.push(this.state.hintMode);
+              this.state.adjOptions.delete(this.state.hintMode.value);
             }
-            this.state.adjOptions.deleteAt(this.state.adjOptions.indexOf(message.h));
-          } else if (message.h.type == "noun") {
-            if (this.state.components.get(message.c).hintNoun.length == 1) {
-              console.log("Noun hint already given to component "+ message.c);
-              return;
+          } else if (this.state.hintMode.type == "noun") {
+            var component = message;
+            if (component.hintNoun.length == 1) {
+              console.log("Noun hint already given to component "+ component.value);
             } else {
-              component.setHintNoun(message.h);
+              component.hintNoun.push(this.state.hintMode);
+              this.state.nounOptions.delete(this.state.hintMode.value);
             }
-            this.state.nounOptions.deleteAt(this.state.nounOptions.indexOf(message.h));
           }
-        } else if (this.state.phase == 3) {
-          if (message.h.type == "adjective") {
-            this.state.components.get(message.c).setHintAdj(message.h);
-            this.state.adjOptions.deleteAt(this.state.adjOptions.indexOf(message.h));
-          } else if (message.h.type == "noun") {
-            this.state.components.get(message.c).setHintNoun(message.h);
-            this.state.nounOptions.deleteAt(this.state.nounOptions.indexOf(message.h));
+        } else if (this.state.phase == "NOVELIST") {
+          if (this.state.hintMode.type == "adjective") {
+            component.setHintAdj(this.state.hintMode);
+            this.state.adjOptions.delete(this.state.hintMode.value);
+          } else if (this.state.hintMode.type == "noun") {
+            component.setHintNoun(this.state.hintMode);
+            this.state.nounOptions.delete(this.state.hintMode.value);
           }
         }
+        this.state.hintMode = new NullHint();
       } else {
-        console.log("clinet is not a novelist!");
+        console.log("client is not a novelist!");
+      }
+    });
+
+    this.onMessage("start-guess", (client, _) => {
+      console.log("received start-guess");
+      if (this.state.playerMap.has(client.id) && !this.state.playerMap.get(client.id).isNovelist) {
+        this.startGuessMode();
       }
     });
 
     this.onMessage("guess", (client, message:Option) => {
-      if (this.state.playerMap.has(client.id) && this.state.playerMap.get(client.id).isDetective()) {
-        if (this.state.phase == 2) {
+      console.log("received guess", message.value );
+      if (this.state.playerMap.has(client.id) && !this.state.playerMap.get(client.id).isNovelist) {
+        if (this.state.phase == "DETECTOR") {
           this.state.guesses.push(new Guess(true, message));
-        } else if (this.state.phase == 4) {
+        } else if (this.state.phase == "FINALGUESS") {
           this.state.guesses.push(new Guess(false, message));
         }
+        this.state.remainingGuesses--;
+        this.state.guessMode = false;
       }
     });
 
-    // this.onMessage("finishedGuessing", (client, _) => {
-    //   this.state.guesses.forEach(g => {
-    //     if (g.option.value == )
-    //   } )
-    // });
+    this.onMessage("end-turn", (client, _) => {
+      if (this.state.phase === "DETECTOR") {
+        this.state.phase = "NOVELIST";
+      } else if (this.state.phase === "NOVELIST") {
+        if (this.givenAllHints()) {
+          if (this.state.round < this.state.maxRounds) {
+            this.state.round++;
+            this.state.remainingGuesses = this.state.maxGuesses;
+            this.state.phase = "DETECTOR";
+          } else {
+            this.state.phase = "FINALGUESS";
+          }
+        }
+      } else if (this.state.phase === "GAMESTART") {
+        this.state.phase = "DETECTOR";
+      }
+      // this.state.guesses.forEach(g => {
+      //   if (g.option.value == )
+      // } )
+    });
 
   }
 

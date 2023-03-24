@@ -4,6 +4,7 @@ import { getRandomNoun, Noun } from "./Noun";
 import { Component } from "./Component";
 import { Guess } from "./Guess";
 import { Player } from "./Player";
+import { Hint, NullHint } from "./Hint";
 
 export class DyingMessageRoomState extends Schema {
 
@@ -13,33 +14,51 @@ export class DyingMessageRoomState extends Schema {
   @type("number")
   life: number;
 
-  @type([ Adjective ])
-  adjOptions: ArraySchema<Adjective> = new ArraySchema<Adjective>();
+  @type({ map: Adjective })
+  adjOptions: MapSchema<Adjective> = new MapSchema<Adjective>();
 
-  @type([ Noun ])
-  nounOptions: ArraySchema<Noun> = new ArraySchema<Noun>();
+  @type({ map: Noun })
+  nounOptions: MapSchema<Noun> = new MapSchema<Noun>();
 
   @type("number")
-  phase: number
+  round: number;
+
+  @type("number")
+  maxRounds: number;
+
+  @type("string")
+  phase: string;
   /*
-  if PHASE =  -1: not running
-              0: Not all players ready
-              1: All players ready; 'Game Start' enabled
-              2: 'Game Start' clicked; 'Start Round' enabled; Novelist's turn before Round 1
-              3: Detector's turn of each round
-              4: Novelist's turn of each round
-              5: Detector's turn after all rounds
-              6: Moment of truth!
+  if PHASE =  NOTRUNNING: not running
+              NOTREADY: Not all players ready
+              ALLREADY: All players ready; 'Game Start' enabled
+              GAMESTART: 'Game Start' clicked; 'Start Round' enabled; Novelist's turn before Round 1
+              DETECTOR: Detector's turn of each round
+              NOVELIST: Novelist's turn of each round
+              FINALGUESS: Detector's turn after all rounds
+              REVEAL: Moment of truth!
   */
 
   @type([ Guess ])
   guesses: ArraySchema<Guess>;
 
   @type("number")
-  remaining_guesses: number;
+  remainingGuesses: number;
+
+  @type("number")
+  maxGuesses: number;
 
   @type({ map: Player }) 
   playerMap: MapSchema<Player> = new MapSchema<Player>();
+
+  @type( Hint )
+  hintMode: Hint;
+  
+  // @type( Adjective )
+  // nounMode: Adjective;
+
+  @type("boolean")
+  guessMode: boolean;
 
   constructor(
     life: number,
@@ -57,19 +76,24 @@ export class DyingMessageRoomState extends Schema {
     this.life = life;
     var num:number = initial_hint_options; 
     var i:number; 
-    for (i = num;i>=1;i--) {
-        this.adjOptions.push(getRandomAdj());
+    while (this.adjOptions.size < num) {
+      const adj = getRandomAdj();
+      this.adjOptions.set(adj.value, adj);
     }
     num = initial_hint_options;
-    for (i = num;i>=1;i--) {
-      this.nounOptions.push(getRandomNoun());
+    while (this.nounOptions.size < num) {
+      const noun = getRandomNoun();
+      this.nounOptions.set(noun.value, noun);
     }
-    this.phase = 0;
-    this.initializeGuesses(numGuesses);
+    this.maxRounds = rounds;
+    this.phase = "NOTREADY";
+    this.guesses = new ArraySchema<Guess>();
+    this.remainingGuesses = numGuesses;
+    this.maxGuesses = numGuesses;
+    this.hintMode = new NullHint();
+    // this.adjMode = null;
+    // this.nounMode = null;
+    this.guessMode = false;
   }
 
-  public initializeGuesses(numGuesses: number) {
-    this.guesses = new ArraySchema<Guess>();
-    this.remaining_guesses = numGuesses;
-  }
 }

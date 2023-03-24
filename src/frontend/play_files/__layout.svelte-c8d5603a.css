@@ -216,6 +216,12 @@ a:hover {
   align-items: center;
   align-content: center;
 }
+.guess-button {
+  margin: 0.5em;
+}
+.guess--active {
+  background-color: var(--team-red);
+}
 .components {
   display: flex;
   flex-direction: row;
@@ -224,8 +230,20 @@ a:hover {
   align-items: center;
   align-content: center;
 }
-.guess-button {
+.component-option {
   margin: 0.5em;
+}
+.component-adj {
+  background-color: var(--adj-button);
+}
+.component-adj:hover {
+  background-color: var(--adj-button-hover);
+}
+.component-noun {
+  background-color: var(--noun-button);
+}
+.component-noun:hover {
+  background-color: var(--noun-button-hover);
 }
 .option--solution {
   font-style: italic;
@@ -337,6 +355,7 @@ a:hover {
   color: #fff;
 }
 .button--secondary {
+  padding: 0.7em 1.2em;
   background-color: var(--secondary-button);
   color: var(--dark);
   box-shadow: none;
