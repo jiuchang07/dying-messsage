@@ -106,6 +106,10 @@
   --adj-button-hover: rgb(176, 179, 242);
   --noun-button: rgb(238, 146, 146);
   --noun-button-hover: rgb(242, 176, 176);
+  --guessed: rgb(146, 238, 146);
+  --guessed-hover: rgb(176, 242, 176);
+  --excluded: rgb(3, 44, 3);
+  --excluded-hover: rgb(4, 67, 4);
   --dark: #1b1b1b;
   --borderradius: 0.25em;
   --bright-background: rgba(0, 0, 0, 0);
@@ -247,6 +251,18 @@ a:hover {
 }
 .option--solution {
   font-style: italic;
+}
+.option--guessed {
+  background-color: var(--guessed);
+}
+.option--guessed:hover {
+  background-color: var(--guessed-hover);
+}
+.option--excluded {
+  background-color: var(--excluded) !important;
+}
+.option--excluded:hover {
+  background-color: var(--excluded-hover) !important;
 }
 .adj-options-title {
   font-size: 1.5em;

@@ -1,10 +1,10 @@
-import { Schema, ArraySchema, MapSchema, Context, type } from "@colyseus/schema";
+import { Schema, CollectionSchema, MapSchema, Context, type } from "@colyseus/schema";
 import { getRandomAdj, Adjective } from "./Adjective";
 import { getRandomNoun, Noun } from "./Noun";
 import { Component } from "./Component";
-import { Guess } from "./Guess";
 import { Player } from "./Player";
 import { Hint, NullHint } from "./Hint";
+import { Option } from "./Option";
 
 export class DyingMessageRoomState extends Schema {
 
@@ -33,20 +33,23 @@ export class DyingMessageRoomState extends Schema {
               NOTREADY: Not all players ready
               ALLREADY: All players ready; 'Game Start' enabled
               GAMESTART: 'Game Start' clicked; 'Start Round' enabled; Novelist's turn before Round 1
-              DETECTOR: Detector's turn of each round
+              DETECTIVE: DETECTIVE's turn of each round
               NOVELIST: Novelist's turn of each round
-              FINALGUESS: Detector's turn after all rounds
+              FINALGUESS: DETECTIVE's turn after all rounds
               REVEAL: Moment of truth!
   */
 
-  @type([ Guess ])
-  guesses: ArraySchema<Guess>;
+  @type({ collection: Option })
+  guesses: CollectionSchema<Option>;
 
   @type("number")
   remainingGuesses: number;
 
   @type("number")
   maxGuesses: number;
+
+  @type("number")
+  maxHints: number;
 
   @type({ map: Player }) 
   playerMap: MapSchema<Player> = new MapSchema<Player>();
@@ -60,15 +63,30 @@ export class DyingMessageRoomState extends Schema {
   @type("boolean")
   guessMode: boolean;
 
+  @type("boolean")
+  givenAllInitialHints: boolean;
+
+  @type("boolean")
+  givenAllInitialAdjHints: boolean;
+  
+  @type("boolean")
+  givenAllInitialNounHints: boolean;
+
+  @type("boolean")
+  givenAllRoundHints: boolean;
+
+  @type("number")
+  remainingHints: number;
+
   constructor(
     life: number,
     components: string[], 
     options: number, 
     rounds: number,
     initial_hint_options: number,
-    initial_hints: number,
+    // initial_hints: number,
     draw_hints: number,
-    round_hints: number,
+    roundHints: number,
     numGuesses: number,
   ) {
     super();
@@ -87,13 +105,26 @@ export class DyingMessageRoomState extends Schema {
     }
     this.maxRounds = rounds;
     this.phase = "NOTREADY";
-    this.guesses = new ArraySchema<Guess>();
+    this.guesses = new CollectionSchema<Option>();
     this.remainingGuesses = numGuesses;
+    this.remainingHints = roundHints;
     this.maxGuesses = numGuesses;
+    this.maxHints = roundHints;
     this.hintMode = new NullHint();
     // this.adjMode = null;
     // this.nounMode = null;
     this.guessMode = false;
+    this.givenAllInitialHints = false;
+    this.givenAllInitialAdjHints = false;
+    this.givenAllInitialNounHints = false;
+    this.givenAllRoundHints = false;
   }
 
 }
+// export const givenAllHints = (state:DyingMessageRoomState) => {
+//   state.components.forEach((comp, key) => {
+//     if (comp.hintAdj.length == 0 || comp.hintNoun.length == 0)
+//       return false;
+//   });
+//   return true;
+// }

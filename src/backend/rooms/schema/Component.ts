@@ -8,14 +8,17 @@ export class Component extends Schema {
     @type("string")
     value: string;
 
-    @type([ Option ])
-    options: ArraySchema<Option> = new ArraySchema<Option>();
+    @type({ map: Option })
+    options: MapSchema<Option> = new MapSchema<Option>();
 
     @type([ Adjective ])
     hintAdj: ArraySchema<Adjective> = new ArraySchema<Adjective>();
 
     @type([ Noun ])
     hintNoun: ArraySchema<Noun> = new ArraySchema<Noun>();
+
+    @type("boolean")
+    finalGuessed: boolean = false;
 
     constructor(value: string, numOptions: number) {
         super();
@@ -39,16 +42,16 @@ export class Component extends Schema {
                 while (valuesSoFar.includes(option.value)) {
                     option = getRandomMotives();
                 } 
-                this.options.push(getRandomMotives());
             } else if (value == "occupations") {
                 var option = getRandomOccupations();
                 while (valuesSoFar.includes(option.value)) {
                     option = getRandomOccupations();
                 } 
-                this.options.push(getRandomOccupations());
             }
+            this.options.set(option.value, option);
         }
-        this.options[Math.floor(Math.random() * this.options.length)].setToSolution();
+        var options = Array.from(this.options.values());
+        options[Math.floor(Math.random() * this.options.size)].setToSolution();
         this.value = value;
     }
 
@@ -96,6 +99,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -105,6 +109,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -114,6 +119,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -123,6 +129,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -132,6 +139,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -141,6 +149,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -150,6 +159,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -159,6 +169,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -168,6 +179,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -177,6 +189,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -186,6 +199,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -195,6 +209,7 @@ const MOTIVES = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "motives";
         constructor() {
             super();
         }
@@ -207,6 +222,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -216,6 +232,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -225,6 +242,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -234,6 +252,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -243,6 +262,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -252,6 +272,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -261,6 +282,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -270,6 +292,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -279,6 +302,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -288,6 +312,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -297,6 +322,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -306,6 +332,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -315,6 +342,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -324,6 +352,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -333,6 +362,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
@@ -342,6 +372,7 @@ const OCCUPATIONS = [
         isInGame = true;
         isExcluded = false;
         isSolution = false;
+        type = "occupations";
         constructor() {
             super();
         }
