@@ -105,19 +105,19 @@ function addGuesses(newState: GameState, room: Room, gameboard: HTMLElement) {
     var guess = document.createElement("div");
     guess.textContent = "<?>";
     guessesList.appendChild(guess);
-    if (newState.guessMode === false &&
-      ((newState.phase === "DETECTIVE" && newState.remainingGuesses > 0) ||
-      (newState.phase === "FINALGUESS" && newState.remainingGuesses > 0)) &&
-      !newState.playerMap[room.sessionId].isNovelist
-    ) {
-      guess.className = "guess button";
-      guess.onclick = function () {
-        room.send("start-guess", null);
-      };
-    } else {
-      guess.className = "guess secondary-button";
-      guess.onclick = function () {};
-    }
+    // if (newState.guessMode === false &&
+    //   ((newState.phase === "DETECTIVE" && newState.remainingGuesses > 0) ||
+    //   (newState.phase === "FINALGUESS" && newState.remainingGuesses > 0)) &&
+    //   !newState.playerMap[room.sessionId].isNovelist
+    // ) {
+    //   guess.className = "guess button";
+    //   guess.onclick = function () {
+    //     room.send("start-guess", null);
+    //   };
+    // } else {
+    //   guess.className = "guess secondary-button";
+    //   guess.onclick = function () {};
+    // }
   }
 }
 function addAdjOptions(
@@ -219,7 +219,7 @@ function addComponents(
       optionEl.textContent = option.value;
       componentOptions.appendChild(optionEl);
       if (
-        newState.guessMode === true &&
+        // newState.guessMode === true &&
         !option.isGuessed &&
         !option.isExcluded &&
         (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS" && !comp.finalGuessed)) &&

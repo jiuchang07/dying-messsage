@@ -255,7 +255,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
         option.isGuessed = true;
         this.state.guesses.add(option);
         this.state.remainingGuesses--;
-        this.state.guessMode = false;
+        // this.state.guessMode = false;
         if (this.state.phase == "FINALGUESS") {
           this.state.components[message.type].finalGuessed = true;
         }
