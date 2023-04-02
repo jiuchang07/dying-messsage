@@ -131,7 +131,6 @@ function addAdjOptions(
     adjOption.textContent = adj.value;
     if (
       newState.hintMode.value === "null" &&
-
       ((newState.phase === "NOVELIST" && !newState.givenAllRoundHints) ||
       (newState.phase === "GAMESTART" && !newState.givenAllInitialAdjHints)) &&
       newState.playerMap[room.sessionId].isNovelist
@@ -205,18 +204,18 @@ function addComponents(
     componentOptions.className = "component-options";
     comp.options.forEach((option) => {
       var optionEl = document.createElement("div");
-      optionEl.className = "option";
+      var optionClassDefault = "option";
       if (option.isSolution && newState.playerMap[room.sessionId].isNovelist) {
-        optionEl.className += " option--solution";
+        optionClassDefault += " option--solution";
       }
+      console.log(option.value, option.isExcluded, option.isGuessed);
+      var optionClassGuessed = "";
       if (option.isExcluded) {
-        optionEl.className += " option--excluded";
-        console.log("excluded option", optionEl.className);
+        optionClassGuessed = " option--excluded";
       } else if (option.isGuessed) {
-        optionEl.className += " option--guessed";
-        console.log("guessed option", optionEl.className);
+        optionClassGuessed = " option--guessed";
       }
-      var optionClassDefault = optionEl.className;
+      optionEl.className = optionClassDefault;
       optionEl.textContent = option.value;
       componentOptions.appendChild(optionEl);
       if (
@@ -226,12 +225,12 @@ function addComponents(
         (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS" && !comp.finalGuessed)) &&
         !newState.playerMap[room.sessionId].isNovelist
       ) {
-        optionEl.className = optionClassDefault + " button";
+        optionEl.className = optionClassDefault + optionClassGuessed + " button";
         optionEl.onclick = () => {
           room.send("guess", option);
         };
       } else {
-        optionEl.className = optionClassDefault + " button-secondary";
+        optionEl.className = optionClassDefault + optionClassGuessed + " button-secondary";
         optionEl.onclick = () => {};
       }
     });
@@ -307,6 +306,16 @@ function addEndTurnButton(
     4. the number of guesses left.
 */
 function drawGameboard(newState: GameState, room: Room) {
+  var round = document.getElementById("round");
+  if (newState.phase === "GAMESTART") {
+    round.textContent = "Novelist giving hints";
+  } else if (newState.phase === "NOVELIST" || newState.phase === "DETECTIVE") {
+    round.textContent = "Round "+ newState.round.toString();
+  } else if (newState.phase === "FINALGUESS") {
+    round.textContent = "Final Guess by Detectives";
+  } else if (newState.phase === "REVEAL") {
+    round.textContent = "Reveal";
+  }
   var gameboard = document.getElementById("gameboard");
   addLives(newState, room, gameboard);
   addGuesses(newState, room, gameboard);
@@ -339,6 +348,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     .then((room) => {
       room.onStateChange((newState: GameState) => {
         drawGameboard(newState, room);
+        if (newState.phase === "REVEAL") {
+          if (newState.life === 0) {
+            alert("You lost!");
+          } else {
+            alert("You won!");
+          }
+        }
       });
     });
 });

@@ -78,6 +78,9 @@ export class DyingMessageRoomState extends Schema {
   @type("number")
   remainingHints: number;
 
+  @type("number")
+  drawHints: number;
+
   constructor(
     life: number,
     components: string[], 
@@ -85,7 +88,7 @@ export class DyingMessageRoomState extends Schema {
     rounds: number,
     initial_hint_options: number,
     // initial_hints: number,
-    draw_hints: number,
+    drawHints: number,
     roundHints: number,
     numGuesses: number,
   ) {
@@ -103,6 +106,7 @@ export class DyingMessageRoomState extends Schema {
       const noun = getRandomNoun();
       this.nounOptions.set(noun.value, noun);
     }
+    this.round = 1;
     this.maxRounds = rounds;
     this.phase = "NOTREADY";
     this.guesses = new CollectionSchema<Option>();
@@ -111,6 +115,7 @@ export class DyingMessageRoomState extends Schema {
     this.maxGuesses = numGuesses;
     this.maxHints = roundHints;
     this.hintMode = new NullHint();
+    this.drawHints = drawHints;
     // this.adjMode = null;
     // this.nounMode = null;
     this.guessMode = false;

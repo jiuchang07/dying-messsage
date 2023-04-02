@@ -259,6 +259,7 @@ a:hover {
   background-color: var(--guessed-hover);
 }
 .option--excluded {
+  color: var(--noun-button);
   background-color: var(--excluded) !important;
 }
 .option--excluded:hover {

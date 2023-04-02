@@ -6,14 +6,15 @@ import { Hint, NullHint } from "./schema/Hint";
 import { Component } from "./schema/Component";
 import { Option } from "./schema/Option";
 import { Guess } from "./schema/Guess";
-import { Adjective } from "./schema/Adjective";
+import { getRandomAdj } from "./schema/Adjective";
+import { getRandomNoun } from "./schema/Noun";
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   private DEFAULT_LIFE = 4;
   public DEFAULT_COMPONENTS = ["motives", "occupations"]
   public DEFAULT_OPTIONS = 8;
-  private DEFAULT_GUESSES = 4;
+  private DEFAULT_GUESSES = 2;
   private DEFAULT_ROUNDS = 3;
   private DEFAULT_INITIAL_HINT_OPTIONS = 6; // Default number of adjectives and nouns to draw at setup
   // private DEFAULT_INITIAL_HINTS = 3; // Default number of adjectives and nouns to give at setup
@@ -106,21 +107,17 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
         ret = false;
       }
     });
-    if (ret) {
-      this.state.guesses.forEach((option) => {
-        option.isExcluded = true;
-      });
-    }
     return ret;
   }
 
   private checkGuessesFinal() {
+    var ret = true;
     this.state.guesses.forEach((option) => {
       if (!option.isSolution) {
-        return false;
+        ret = false;
       }
     });
-    return true;
+    return ret;
   }
 
   private givenAllRoundHints() {
@@ -246,7 +243,6 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     });
 
     this.onMessage("start-guess", (client, _) => {
-      console.log("received start-guess");
       if (this.state.playerMap.has(client.id) && !this.state.playerMap.get(client.id).isNovelist) {
         this.startGuessMode();
       }
@@ -269,13 +265,28 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     this.onMessage("end-turn", (client, _) => {
       if (this.state.phase === "DETECTIVE") {
         if (this.checkGuessesRuleOut()) {
+          this.state.guesses.forEach((option) => {
+            option.isExcluded = true;
+            console.log(option.value, option.isExcluded, this.state.components[option.type].options[option.value].isExcluded);
+          });
           this.state.remainingGuesses = this.state.maxGuesses;
           this.state.guesses.clear();
+          var currentAdjOptionsSize = this.state.adjOptions.size;
+          console.log(currentAdjOptionsSize + this.state.drawHints, this.state.adjOptions.size);
+          while (this.state.adjOptions.size < currentAdjOptionsSize + this.state.drawHints) {
+            const adj = getRandomAdj();
+            this.state.adjOptions.set(adj.value, adj);
+          }
+          var currentNounOptionsSize = this.state.nounOptions.size;
+          while (this.state.nounOptions.size < currentNounOptionsSize + this.state.drawHints) {
+            const noun = getRandomNoun();
+            this.state.nounOptions.set(noun.value, noun);
+          }
           this.state.phase = "NOVELIST";
         } else {
           this.state.life--;
           if (this.state.life <= 0) {
-            this.state.phase = "ENDGAME";
+            this.state.phase = "REVEAL";
           }
           // this.state.guesses.clear();
           // this.state.remainingGuesses = this.state.maxGuesses;
@@ -285,9 +296,11 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
           if (this.state.round < this.state.maxRounds) {
             this.state.round++;
             this.state.remainingHints = this.state.maxHints;
+            this.state.givenAllRoundHints = this.givenAllRoundHints();
             this.state.phase = "DETECTIVE";
           } else {
             this.state.phase = "FINALGUESS";
+            this.state.remainingGuesses = this.state.components.size;
           }
         }
       } else if (this.state.phase === "GAMESTART") {
@@ -296,20 +309,16 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
       }
       } else if (this.state.phase === "FINALGUESS") {
         if (this.checkGuessesFinal()) {
-          this.state.phase = "ENDGAME";
+          this.state.phase = "REVEAL";
         } else {
           this.state.life--;
           if (this.state.life <= 0) {
-            this.state.phase = "ENDGAME";
+            this.state.phase = "REVEAL";
           }
           // this.state.guesses.clear();
           // this.state.remainingGuesses = this.state.maxGuesses;
         }
       }
-      // this.state.guesses.forEach(g => {
-      //   if (g.option.value == )
-      // } )
-      console.log(this.state.phase);
     });
 
   }
