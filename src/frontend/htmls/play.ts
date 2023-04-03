@@ -228,7 +228,7 @@ function addComponents(
         // newState.guessMode === true &&
         // !option.isGuessed &&
         // !option.isExcluded &&
-        (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS" && !comp.finalGuessed)) &&
+        (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS")) &&
         !newState.playerMap[room.sessionId].isNovelist
       ) {
         if (option.isGuessed) {
@@ -236,7 +236,7 @@ function addComponents(
           optionEl.onclick = () => {
             room.send("cancel-guess", option);
           };
-        } else {
+        } else if (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS" && !comp.finalGuessed)) {
           optionEl.className = " option-button " + optionClassDefault + optionClassGuessed;
           optionEl.onclick = () => {
             room.send("guess", option);
@@ -253,9 +253,13 @@ function addComponents(
       var adjEl = document.createElement("div");
       adjEl.className = "option";
       adjEl.textContent = key;
-      adjEl.onclick = () => {
-        room.send("cancel-hint", {hint: adj, comp: comp.value});
-      };
+      if (!adj.assigned) {
+        adjEl.onclick = () => {
+          room.send("cancel-hint", {hint: adj, comp: comp.value});
+        };
+      } else {
+        adjEl.onclick = () => {};
+      }
       componentAdj.appendChild(adjEl);
     });
     var componentNoun = document.createElement("div");
@@ -264,9 +268,13 @@ function addComponents(
       var nounEl = document.createElement("div");
       nounEl.className = "option";
       nounEl.textContent = key;
-      nounEl.onclick = () => {
-        room.send("cancel-hint", {hint: noun, comp: comp.value});
-      };
+      if (!noun.assigned) {
+        nounEl.onclick = () => {
+          room.send("cancel-hint", {hint: noun, comp: comp.value});
+        };
+      } else {
+        nounEl.onclick = () => {};
+      }
       componentNoun.appendChild(nounEl);
     });
     component.appendChild(componentAdj);

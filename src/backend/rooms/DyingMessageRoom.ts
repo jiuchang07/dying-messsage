@@ -6,7 +6,7 @@ import { Hint, NullHint } from "./schema/Hint";
 import { Component } from "./schema/Component";
 import { Option } from "./schema/Option";
 import { Guess } from "./schema/Guess";
-import { getRandomAdj } from "./schema/Adjective";
+import { Adjective, getRandomAdj } from "./schema/Adjective";
 import { getRandomNoun } from "./schema/Noun";
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -147,6 +147,23 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
         ret = false;
     });
     return ret;
+  }
+
+  private fixHints() {
+    this.state.components.forEach((comp, key) => {
+      comp.hintAdj.forEach((hint, key) => {
+        var newAdj = new (hint.constructor as { new (): Adjective })();
+        Object.assign(newAdj, hint);
+        newAdj.assigned = true;
+        comp.hintAdj[key] = newAdj;
+      });
+      comp.hintNoun.forEach((hint, key) => {
+        var newNoun = new (hint.constructor as { new (): Noun })();
+        Object.assign(newNoun, hint);
+        newNoun.assigned = true;
+        comp.hintNoun[key] = newNoun;
+      });
+    });
   }
 
   private checkGameOver() {
@@ -337,6 +354,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
         }
       } else if (this.state.phase === "NOVELIST") {
         if (this.state.givenAllRoundHints) {
+          this.fixHints();
           if (this.state.round < this.state.maxRounds) {
             this.state.round++;
             this.state.remainingHints = this.state.maxHints;
@@ -349,8 +367,9 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
         }
       } else if (this.state.phase === "GAMESTART") {
         if (this.state.givenAllInitialHints) {
+          this.fixHints();
           this.state.phase = "DETECTIVE";
-      }
+        }
       } else if (this.state.phase === "FINALGUESS") {
         if (this.checkGuessesFinal()) {
           this.state.phase = "REVEAL";

@@ -7,6 +7,9 @@ export abstract class Hint extends Schema {
     @type("string")
     type: string;
 
+    @type("boolean")
+    assigned: boolean = false;
+
     constructor() {
         super();
     }
