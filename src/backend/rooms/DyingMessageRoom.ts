@@ -129,6 +129,8 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   }
 
   private givenAllInitialHints() {
+    this.state.givenAllInitialAdjHints = this.givenAllInitialAdjHints();
+    this.state.givenAllInitialNounHints = this.givenAllInitialNounHints();
     return this.state.givenAllInitialAdjHints && this.state.givenAllInitialNounHints;
   }
 
@@ -221,7 +223,6 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     this.onMessage("hint", (client, message: string) => {
       if (this.state.playerMap.has(client.id) && this.state.playerMap.get(client.id).isNovelist) {
         var component = this.state.components.get(message);
-        // var component = message;
         if (this.state.phase == "GAMESTART") { 
           if (this.state.hintMode.type == "adjective") {
             if (component.hintAdj.size == 1) {
@@ -239,8 +240,6 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
               this.state.nounOptions.delete(this.state.hintMode.value);
             }
           }
-          this.state.givenAllInitialAdjHints = this.givenAllInitialAdjHints();
-          this.state.givenAllInitialNounHints = this.givenAllInitialNounHints();
           this.state.givenAllInitialHints = this.givenAllInitialHints();
         } else if (this.state.phase == "NOVELIST") {
           if (this.state.hintMode.type == "adjective") {
@@ -272,8 +271,6 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
           this.state.nounOptions.set(hint.value, hint);
         }
         if (this.state.phase == "GAMESTART") {
-          this.state.givenAllInitialAdjHints = this.givenAllInitialAdjHints();
-          this.state.givenAllInitialNounHints = this.givenAllInitialNounHints();
           this.state.givenAllInitialHints = this.givenAllInitialHints();
         } else if (this.state.phase == "NOVELIST") {
           this.state.remainingHints++;

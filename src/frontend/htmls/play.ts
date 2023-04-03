@@ -28,6 +28,45 @@ function askNickname(room: Room) {
   };
 }
 
+
+function readyModalForHost(el: HTMLElement, room: Room) {
+  el.textContent = "Game Start";
+  room.onStateChange((newState: GameState) => {
+    if (newState.phase === "NOTREADY") {
+      el.className = "button button--secondary";
+      el.removeEventListener("click", () => {});
+    } else if (newState.phase === "ALLREADY") {
+      el.className = "button";
+      el.addEventListener("click", () => {
+        room.send("ready", READY);
+      });
+    }
+  });
+}
+
+function readyModalForGuest(el: HTMLElement, room: Room) {
+  el.textContent = "Ready";
+  el.onclick = () => {
+    if (el.textContent === "Ready") {
+      room.send("ready", READY);
+      el.textContent = "Not Ready";
+      el.className = "button button-secondary";
+    } else {
+      room.send("ready", NOT_READY);
+      el.className = "button";
+      el.textContent = "Ready";
+    }
+  };
+}
+
+function removeReadyModal(readyModal: HTMLElement, room: Room) {
+  room.onStateChange((newState: GameState) => {
+    if (newState.phase === "GAMESTART") {
+      readyModal.style.display = "none";
+    }
+  });
+}
+
 function setReadyModal(room: Room, host: boolean) {
   var readyModal = document.getElementById("ready-modal");
   readyModal.style.display = "block";
@@ -35,37 +74,34 @@ function setReadyModal(room: Room, host: boolean) {
   readyModal.appendChild(el);
   el.className = "button";
   if (host) {
-    el.textContent = "Game Start";
-    room.onStateChange((newState: GameState) => {
-      if (newState.phase === "NOTREADY") {
-        el.className = "button button--secondary";
-        el.removeEventListener("click", () => {});
-      } else if (newState.phase === "ALLREADY") {
-        el.className = "button";
-        el.addEventListener("click", () => {
-          room.send("ready", READY);
-        });
-      }
-    });
+    readyModalForHost(el, room);
   } else {
-    el.textContent = "Ready";
-    el.onclick = () => {
-      if (el.textContent === "Ready") {
-        room.send("ready", READY);
-        el.textContent = "Not Ready";
-        el.className = "button button-secondary";
-      } else {
-        room.send("ready", NOT_READY);
-        el.className = "button";
-        el.textContent = "Ready";
-      }
-    };
+    readyModalForGuest(el, room);
   }
-  room.onStateChange((newState: GameState) => {
-    if (newState.phase === "GAMESTART") {
-      readyModal.style.display = "none";
+  removeReadyModal(readyModal, room);
+}
+
+function displayPhase(newState: GameState) {
+  var round = document.getElementById("round");
+  if (newState.phase === "GAMESTART") {
+    round.textContent = "Novelist giving hints";
+  } else if (newState.phase === "NOVELIST" || newState.phase === "DETECTIVE") {
+    round.textContent = "Round "+ newState.round.toString();
+  } else if (newState.phase === "FINALGUESS") {
+    round.textContent = "Final Guess by Detectives";
+  } else if (newState.phase === "REVEAL") {
+    round.textContent = "Reveal";
+  }
+}
+
+function reveal(newState: GameState) {
+  if (newState.phase === "REVEAL") {
+    if (newState.life === 0) {
+      alert("You lost!");
+    } else {
+      alert("You won!");
     }
-  });
+  }
 }
 
 function addHTMLEl(
@@ -90,6 +126,7 @@ function addHTMLEl(
   el.appendChild(elList);
   return elList;
 }
+
 function addLives(newState: GameState, room: Room, gameboard: HTMLElement) {
   var livesList = addHTMLEl(gameboard, "lives", "Life", 0);
   for (var i = 0; i < newState.life; i++) {
@@ -99,6 +136,7 @@ function addLives(newState: GameState, room: Room, gameboard: HTMLElement) {
     livesList.appendChild(life);
   }
 }
+
 function addGuesses(newState: GameState, room: Room, gameboard: HTMLElement) {
   var guessesList = addHTMLEl(gameboard, "guesses", "Guesses", 1);
   for (var i = 0; i < newState.remainingGuesses; i++) {
@@ -120,6 +158,30 @@ function addGuesses(newState: GameState, room: Room, gameboard: HTMLElement) {
     // }
   }
 }
+
+function enableAdjButton(newState: GameState, room: Room): boolean {
+  return newState.hintMode.value === "null" &&
+  ((newState.phase === "NOVELIST" && !newState.givenAllRoundHints) ||
+  (newState.phase === "GAMESTART" && !newState.givenAllInitialAdjHints)) &&
+  newState.playerMap[room.sessionId].isNovelist
+}
+
+function enableNounButton(newState: GameState, room: Room): boolean {
+  return newState.hintMode.value === "null" &&
+  ((newState.phase === "NOVELIST" && !newState.givenAllRoundHints) ||
+  (newState.phase === "GAMESTART" && !newState.givenAllInitialNounHints)) &&
+  newState.playerMap[room.sessionId].isNovelist
+}
+
+function enableCompButton(newState: GameState, room: Room, comp: any): boolean {
+  return newState.hintMode.value != "null" &&
+  ((newState.phase === "NOVELIST") || 
+  (newState.phase === "GAMESTART" &&
+  ((newState.hintMode.type === "adjective" && comp.hintAdj.size == 0) ||
+  (newState.hintMode.type === "noun" && comp.hintNoun.size == 0)))) &&
+  newState.playerMap[room.sessionId].isNovelist
+}
+
 function addAdjOptions(
   newState: GameState,
   room: Room,
@@ -129,12 +191,7 @@ function addAdjOptions(
   newState.adjOptions.forEach((adj) => {
     var adjOption = document.createElement("div");
     adjOption.textContent = adj.value;
-    if (
-      newState.hintMode.value === "null" &&
-      ((newState.phase === "NOVELIST" && !newState.givenAllRoundHints) ||
-      (newState.phase === "GAMESTART" && !newState.givenAllInitialAdjHints)) &&
-      newState.playerMap[room.sessionId].isNovelist
-    ) {
+    if (enableAdjButton(newState, room)) {
       adjOption.className = "adj-option button";
       adjOption.onclick = () => {
         room.send("start-hint", adj.value);
@@ -146,6 +203,7 @@ function addAdjOptions(
     adjOptionsList.appendChild(adjOption);
   });
 }
+
 function addNounOptions(
   newState: GameState,
   room: Room,
@@ -155,12 +213,7 @@ function addNounOptions(
   newState.nounOptions.forEach((noun) => {
     var nounOption = document.createElement("div");
     nounOption.textContent = noun.value;
-    if (
-      newState.hintMode.value === "null" &&
-      ((newState.phase === "NOVELIST" && !newState.givenAllRoundHints) ||
-      (newState.phase === "GAMESTART" && !newState.givenAllInitialNounHints)) &&
-      newState.playerMap[room.sessionId].isNovelist
-    ) {
+    if (enableNounButton(newState, room)) {
       nounOption.className = "noun-option button";
       nounOption.onclick = () => {
         room.send("start-hint", noun.value);
@@ -172,6 +225,91 @@ function addNounOptions(
     nounOptionsList.appendChild(nounOption);
   });
 }
+
+function addCompOptions(newState: GameState, room: Room, component: HTMLElement, comp: any): HTMLElement {
+  var componentOptions = document.createElement("div");
+  componentOptions.className = "component-options";
+  comp.options.forEach((option) => {
+    var optionEl = document.createElement("div");
+    var optionClassDefault = "option";
+    if (option.isSolution && newState.playerMap[room.sessionId].isNovelist) {
+      optionClassDefault += " option--solution";
+    }
+    var optionClassGuessed = "";
+    if (option.isExcluded) {
+      console.log("excluded option");
+      optionClassGuessed = " option--excluded";
+    } else if (option.isGuessed) {
+      console.log("guessed option");
+      optionClassGuessed = " option--guessed";
+    } else {
+      console.log("not guessed option");
+      optionClassGuessed = "";
+    }
+    optionEl.className = optionClassDefault;
+    optionEl.textContent = option.value;
+    componentOptions.appendChild(optionEl);
+    if (
+      (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS")) &&
+      !newState.playerMap[room.sessionId].isNovelist
+    ) {
+      if (option.isGuessed) {
+        optionEl.className = " option-cancel-button " + optionClassDefault + optionClassGuessed;
+        optionEl.onclick = () => {
+          room.send("cancel-guess", option);
+        };
+      } else if (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS" && !comp.finalGuessed)) {
+        optionEl.className = " option-button " + optionClassDefault + optionClassGuessed;
+        optionEl.onclick = () => {
+          room.send("guess", option);
+        };
+      }
+    } else {
+      optionEl.className = " option-button-secondary " + optionClassDefault + optionClassGuessed;
+      optionEl.onclick = () => {};
+    }
+  });
+  component.appendChild(componentOptions);
+}
+
+function addCompAdj(room: Room, component: HTMLElement, comp: any): HTMLElement {
+  var componentAdj = document.createElement("div");
+  componentAdj.className = "component-adj";
+  comp.hintAdj.forEach((adj, key) => {
+    var adjEl = document.createElement("div");
+    adjEl.className = "option";
+    adjEl.textContent = key;
+    if (!adj.assigned) {
+      adjEl.onclick = () => {
+        room.send("cancel-hint", {hint: adj, comp: comp.value});
+      };
+    } else {
+      adjEl.onclick = () => {};
+    }
+    componentAdj.appendChild(adjEl);
+  });
+  component.appendChild(componentAdj);
+}
+
+function addCompNoun(room: Room, component: HTMLElement, comp: any): HTMLElement {
+  var componentNoun = document.createElement("div");
+  componentNoun.className = "component-noun";
+  comp.hintNoun.forEach((noun, key) => {
+    var nounEl = document.createElement("div");
+    nounEl.className = "option";
+    nounEl.textContent = key;
+    if (!noun.assigned) {
+      nounEl.onclick = () => {
+        room.send("cancel-hint", {hint: noun, comp: comp.value});
+      };
+    } else {
+      nounEl.onclick = () => {};
+    }
+    componentNoun.appendChild(nounEl);
+  });
+  component.appendChild(componentNoun);
+}
+
 function addComponents(
   newState: GameState,
   room: Room,
@@ -184,15 +322,7 @@ function addComponents(
     componentTitle.className = "component-title";
     componentTitle.textContent = key;
     component.appendChild(componentTitle);
-    console.log(newState, comp)
-    if (
-      newState.hintMode.value != "null" &&
-      ((newState.phase === "NOVELIST") || 
-      (newState.phase === "GAMESTART" &&
-      ((newState.hintMode.type === "adjective" && comp.hintAdj.size == 0) ||
-      (newState.hintMode.type === "noun" && comp.hintNoun.size == 0)))) &&
-      newState.playerMap[room.sessionId].isNovelist
-    ) {
+    if (enableCompButton(newState, room, comp)) {
       component.className = "component button";
       component.onclick = () => {
         room.send("hint", comp.value);
@@ -201,88 +331,42 @@ function addComponents(
       component.className = "component button--secondary";
       component.onclick = () => {};
     }
-    var componentOptions = document.createElement("div");
-    componentOptions.className = "component-options";
-    comp.options.forEach((option) => {
-      var optionEl = document.createElement("div");
-      var optionClassDefault = "option";
-      if (option.isSolution && newState.playerMap[room.sessionId].isNovelist) {
-        optionClassDefault += " option--solution";
-      }
-      console.log(option.value, option.isExcluded, option.isGuessed);
-      var optionClassGuessed = "";
-      if (option.isExcluded) {
-        console.log("excluded option");
-        optionClassGuessed = " option--excluded";
-      } else if (option.isGuessed) {
-        console.log("guessed option");
-        optionClassGuessed = " option--guessed";
-      } else {
-        console.log("not guessed option");
-        optionClassGuessed = "";
-      }
-      optionEl.className = optionClassDefault;
-      optionEl.textContent = option.value;
-      componentOptions.appendChild(optionEl);
-      if (
-        // newState.guessMode === true &&
-        // !option.isGuessed &&
-        // !option.isExcluded &&
-        (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS")) &&
-        !newState.playerMap[room.sessionId].isNovelist
-      ) {
-        if (option.isGuessed) {
-          optionEl.className = " option-cancel-button " + optionClassDefault + optionClassGuessed;
-          optionEl.onclick = () => {
-            room.send("cancel-guess", option);
-          };
-        } else if (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS" && !comp.finalGuessed)) {
-          optionEl.className = " option-button " + optionClassDefault + optionClassGuessed;
-          optionEl.onclick = () => {
-            room.send("guess", option);
-          };
-        }
-      } else {
-        optionEl.className = " option-button-secondary " + optionClassDefault + optionClassGuessed;
-        optionEl.onclick = () => {};
-      }
-    });
-    var componentAdj = document.createElement("div");
-    componentAdj.className = "component-adj";
-    comp.hintAdj.forEach((adj, key) => {
-      var adjEl = document.createElement("div");
-      adjEl.className = "option";
-      adjEl.textContent = key;
-      if (!adj.assigned) {
-        adjEl.onclick = () => {
-          room.send("cancel-hint", {hint: adj, comp: comp.value});
-        };
-      } else {
-        adjEl.onclick = () => {};
-      }
-      componentAdj.appendChild(adjEl);
-    });
-    var componentNoun = document.createElement("div");
-    componentNoun.className = "component-noun";
-    comp.hintNoun.forEach((noun, key) => {
-      var nounEl = document.createElement("div");
-      nounEl.className = "option";
-      nounEl.textContent = key;
-      if (!noun.assigned) {
-        nounEl.onclick = () => {
-          room.send("cancel-hint", {hint: noun, comp: comp.value});
-        };
-      } else {
-        nounEl.onclick = () => {};
-      }
-      componentNoun.appendChild(nounEl);
-    });
-    component.appendChild(componentAdj);
-    component.appendChild(componentNoun);
-    component.appendChild(componentOptions);
+    addCompOptions(newState, room, component, comp);
+    addCompAdj(room, component, comp);
+    addCompNoun(room, component, comp);
     componentsList.appendChild(component);
   });
 }
+
+function addEndTurnButtonForNovelist(newState: GameState, room: Room, guessButton: HTMLElement) {
+  guessButton.textContent = "Finish giving hints";
+  if (
+    (newState.phase === "GAMESTART" && newState.givenAllInitialHints) ||
+    (newState.phase === "NOVELIST" && newState.givenAllRoundHints)
+  ) {
+    guessButton.onclick = () => {
+      room.send("end-turn", null);
+    };
+    guessButton.className = "button guess-button";
+  } else {
+    guessButton.onclick = () => {};
+    guessButton.className = "button--secondary guess-button";
+  }
+}
+
+function addEndTurnButtonForDetective(newState: GameState, room: Room, guessButton: HTMLElement) {
+  guessButton.textContent = "Finish guessing";
+  if (newState.remainingGuesses == 0) {
+    guessButton.onclick = () => {
+      room.send("end-turn", null);
+    };
+    guessButton.className = "button guess-button";
+  } else {
+    guessButton.onclick = () => {};
+    guessButton.className = "button--secondary guess-button";
+  }
+}
+
 function addEndTurnButton(
   newState: GameState,
   room: Room,
@@ -290,32 +374,10 @@ function addEndTurnButton(
 ) {
   var guessButton = document.createElement("div");
   if (newState.playerMap[room.sessionId].isNovelist) {
-    guessButton.textContent = "Finish giving hints";
-    if (
-      (newState.phase === "GAMESTART" && newState.givenAllInitialHints) ||
-      (newState.phase === "NOVELIST" && newState.givenAllRoundHints)
-    ) {
-      guessButton.onclick = () => {
-        room.send("end-turn", null);
-      };
-      guessButton.className = "button guess-button";
-    } else {
-      guessButton.onclick = () => {};
-      guessButton.className = "button--secondary guess-button";
-    }
+    addEndTurnButtonForNovelist(newState, room, guessButton);
   } else {
-    guessButton.textContent = "Finish guessing";
-    if (newState.remainingGuesses == 0) {
-      guessButton.onclick = () => {
-        room.send("end-turn", null);
-      };
-      guessButton.className = "button guess-button";
-    } else {
-      guessButton.onclick = () => {};
-      guessButton.className = "button--secondary guess-button";
-    }
+    addEndTurnButtonForDetective(newState, room, guessButton);
   }
-
   if (gameboard.hasChildNodes() && gameboard.childNodes.length > 5) {
     gameboard.replaceChild(guessButton, gameboard.lastChild);
   } else {
@@ -323,26 +385,8 @@ function addEndTurnButton(
   }
 }
 
-/*
-    This function draws a gameboard displaying 
-    1. all options for each component in newState.components which is a dictionary 
-    from component name in string to a Component instance, which contains a list of 
-    options in its 'options' variable
-    2. all adjectives and nouns in newState.adjOptions and newState.nounOptions
-    3. the number of lives left 
-    4. the number of guesses left.
-*/
 function drawGameboard(newState: GameState, room: Room) {
-  var round = document.getElementById("round");
-  if (newState.phase === "GAMESTART") {
-    round.textContent = "Novelist giving hints";
-  } else if (newState.phase === "NOVELIST" || newState.phase === "DETECTIVE") {
-    round.textContent = "Round "+ newState.round.toString();
-  } else if (newState.phase === "FINALGUESS") {
-    round.textContent = "Final Guess by Detectives";
-  } else if (newState.phase === "REVEAL") {
-    round.textContent = "Reveal";
-  }
+  displayPhase(newState);
   var gameboard = document.getElementById("gameboard");
   addLives(newState, room, gameboard);
   addGuesses(newState, room, gameboard);
@@ -375,13 +419,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     .then((room) => {
       room.onStateChange((newState: GameState) => {
         drawGameboard(newState, room);
-        if (newState.phase === "REVEAL") {
-          if (newState.life === 0) {
-            alert("You lost!");
-          } else {
-            alert("You won!");
-          }
-        }
+        reveal(newState);
       });
     });
 });
