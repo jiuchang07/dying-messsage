@@ -253,6 +253,7 @@ a:hover {
   font-style: italic;
 }
 .option--guessed {
+  color: var(--adj-button);
   background-color: var(--guessed);
 }
 .option--guessed:hover {
@@ -382,6 +383,35 @@ a:hover {
 }
 .button--secondary:hover {
   box-shadow: none;
+  background-color: var(--secondary-button-hover);
+  color: var(--dark);
+}
+.option-cancel-button {
+  padding: 0.7em 1.2em;
+  cursor: pointer;
+  background-color: var(--guessed);
+  color: var(--dark);
+  box-shadow: none;
+}
+.option-button {
+  padding: 0.7em 1.2em;
+  cursor: pointer;
+  background-color: var(--primary);
+  color: #fff;
+  box-shadow: none;
+}
+.option-button:hover {
+  background-color: var(--primary-hover);
+  color: #fff;
+}
+.option-button--secondary {
+  padding: 0.7em 1.2em;
+  cursor: pointer;
+  background-color: var(--secondary-button);
+  color: var(--dark);
+  box-shadow: none;
+}
+.option-button--secondary:hover {
   background-color: var(--secondary-button-hover);
   color: var(--dark);
 }

@@ -184,12 +184,13 @@ function addComponents(
     componentTitle.className = "component-title";
     componentTitle.textContent = key;
     component.appendChild(componentTitle);
+    console.log(newState, comp)
     if (
       newState.hintMode.value != "null" &&
       ((newState.phase === "NOVELIST") || 
       (newState.phase === "GAMESTART" &&
-      ((newState.hintMode.type === "adjective" && comp.hintAdj.length == 0) ||
-      (newState.hintMode.type === "noun" && comp.hintNoun.length == 0)))) &&
+      ((newState.hintMode.type === "adjective" && comp.hintAdj.size == 0) ||
+      (newState.hintMode.type === "noun" && comp.hintNoun.size == 0)))) &&
       newState.playerMap[room.sessionId].isNovelist
     ) {
       component.className = "component button";
@@ -211,43 +212,61 @@ function addComponents(
       console.log(option.value, option.isExcluded, option.isGuessed);
       var optionClassGuessed = "";
       if (option.isExcluded) {
+        console.log("excluded option");
         optionClassGuessed = " option--excluded";
       } else if (option.isGuessed) {
+        console.log("guessed option");
         optionClassGuessed = " option--guessed";
+      } else {
+        console.log("not guessed option");
+        optionClassGuessed = "";
       }
       optionEl.className = optionClassDefault;
       optionEl.textContent = option.value;
       componentOptions.appendChild(optionEl);
       if (
         // newState.guessMode === true &&
-        !option.isGuessed &&
-        !option.isExcluded &&
+        // !option.isGuessed &&
+        // !option.isExcluded &&
         (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS" && !comp.finalGuessed)) &&
         !newState.playerMap[room.sessionId].isNovelist
       ) {
-        optionEl.className = optionClassDefault + optionClassGuessed + " button";
-        optionEl.onclick = () => {
-          room.send("guess", option);
-        };
+        if (option.isGuessed) {
+          optionEl.className = " option-cancel-button " + optionClassDefault + optionClassGuessed;
+          optionEl.onclick = () => {
+            room.send("cancel-guess", option);
+          };
+        } else {
+          optionEl.className = " option-button " + optionClassDefault + optionClassGuessed;
+          optionEl.onclick = () => {
+            room.send("guess", option);
+          };
+        }
       } else {
-        optionEl.className = optionClassDefault + optionClassGuessed + " button-secondary";
+        optionEl.className = " option-button-secondary " + optionClassDefault + optionClassGuessed;
         optionEl.onclick = () => {};
       }
     });
     var componentAdj = document.createElement("div");
     componentAdj.className = "component-adj";
-    comp.hintAdj.forEach((adj) => {
+    comp.hintAdj.forEach((adj, key) => {
       var adjEl = document.createElement("div");
       adjEl.className = "option";
-      adjEl.textContent = adj.value;
+      adjEl.textContent = key;
+      adjEl.onclick = () => {
+        room.send("cancel-hint", {hint: adj, comp: comp.value});
+      };
       componentAdj.appendChild(adjEl);
     });
     var componentNoun = document.createElement("div");
     componentNoun.className = "component-noun";
-    comp.hintNoun.forEach((noun) => {
+    comp.hintNoun.forEach((noun, key) => {
       var nounEl = document.createElement("div");
       nounEl.className = "option";
-      nounEl.textContent = noun.value;
+      nounEl.textContent = key;
+      nounEl.onclick = () => {
+        room.send("cancel-hint", {hint: noun, comp: comp.value});
+      };
       componentNoun.appendChild(nounEl);
     });
     component.appendChild(componentAdj);

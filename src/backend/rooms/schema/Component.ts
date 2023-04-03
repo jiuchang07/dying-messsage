@@ -11,11 +11,11 @@ export class Component extends Schema {
     @type({ map: Option })
     options: MapSchema<Option> = new MapSchema<Option>();
 
-    @type([ Adjective ])
-    hintAdj: ArraySchema<Adjective> = new ArraySchema<Adjective>();
+    @type({ map: Adjective })
+    hintAdj: MapSchema<Adjective> = new MapSchema<Adjective>();
 
-    @type([ Noun ])
-    hintNoun: ArraySchema<Noun> = new ArraySchema<Noun>();
+    @type({ map: Noun })
+    hintNoun: MapSchema<Noun> = new MapSchema<Noun>();
 
     @type("boolean")
     finalGuessed: boolean = false;
@@ -65,11 +65,11 @@ export class Component extends Schema {
     }
 
     public setHintAdj(hint:Adjective) {
-        this.hintAdj.push(hint);
+        this.hintAdj.set(hint.value, hint);
     }
 
     public setHintNoun(hint:Noun) {
-        this.hintNoun.push(hint);
+        this.hintNoun.set(hint.value, hint);
     }
 
     public getValue() {

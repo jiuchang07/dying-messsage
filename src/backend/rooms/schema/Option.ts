@@ -23,12 +23,17 @@ export abstract class Option extends Schema {
     @type("string")
     type: string;
 
-    constructor() {
+    constructor(type: string, isExcluded: boolean = false, isGuessed: boolean = false) {
         super();
+        this.type = type;
+        this.isExcluded = isExcluded;
+        this.isGuessed = isGuessed;
+
         // this.component = component;
     }
     
     setToSolution(): void {
         this.isSolution = true;
     }
+
 }
