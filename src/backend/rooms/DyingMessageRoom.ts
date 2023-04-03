@@ -151,7 +151,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     return ret;
   }
 
-  private fixHints() {
+  private assignHints() {
     this.state.components.forEach((comp, key) => {
       comp.hintAdj.forEach((hint, key) => {
         var newAdj = new (hint.constructor as { new (): Adjective })();
@@ -168,6 +168,113 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     });
   }
 
+  private hintAtGameStart(component: Component) {
+    if (this.state.hintMode.type == "adjective") {
+      if (component.hintAdj.size == 1) {
+        console.log("Adjective hint already given to component "+ component.value);
+      } else {
+        console.log("Adjective hint "+this.state.hintMode.value+" given to component "+ component.value);
+        component.hintAdj.set(this.state.hintMode.value, this.state.hintMode);
+        this.state.adjOptions.delete(this.state.hintMode.value);
+      } 
+    } else if (this.state.hintMode.type == "noun") {
+      if (component.hintNoun.size == 1) {
+        console.log("Noun hint already given to component "+ component.value);
+      } else {
+        component.hintNoun.set(this.state.hintMode.value, this.state.hintMode);
+        this.state.nounOptions.delete(this.state.hintMode.value);
+      }
+    }
+    this.state.givenAllInitialHints = this.givenAllInitialHints();
+  }
+
+  private hintAtNovelist(component: Component) {
+    if (this.state.hintMode.type == "adjective") {
+      component.setHintAdj(this.state.hintMode);
+      this.state.adjOptions.delete(this.state.hintMode.value);
+    } else if (this.state.hintMode.type == "noun") {
+      component.setHintNoun(this.state.hintMode);
+      this.state.nounOptions.delete(this.state.hintMode.value);
+    }
+    this.state.remainingHints--;
+    this.state.givenAllRoundHints = this.givenAllRoundHints();
+  }
+
+  private updateGuessedOptions() {
+    this.state.guesses.forEach((option) => {
+      var newOption = new (option.constructor as { new (): Option })();
+      Object.assign(newOption, option);
+      newOption.isGuessed = false;
+      newOption.isExcluded = true;
+      this.state.components[option.type].options[option.value] = newOption;
+      console.log(option.value, option.isExcluded, this.state.components[option.type].options[option.value].isExcluded);
+    });
+  }
+
+  private addRoundHints() {
+    var currentAdjOptionsSize = this.state.adjOptions.size;
+    while (this.state.adjOptions.size < currentAdjOptionsSize + this.state.drawHints) {
+      const adj = getRandomAdj();
+      this.state.adjOptions.set(adj.value, adj);
+    }
+    var currentNounOptionsSize = this.state.nounOptions.size;
+    while (this.state.nounOptions.size < currentNounOptionsSize + this.state.drawHints) {
+      const noun = getRandomNoun();
+      this.state.nounOptions.set(noun.value, noun);
+    }
+  }
+
+  private endTurnForDetective() {
+    if (this.checkGuessesRuleOut()) {
+      this.updateGuessedOptions();
+      this.state.remainingGuesses = this.state.maxGuesses;
+      this.state.guesses.clear();
+      this.addRoundHints();
+      this.state.phase = "NOVELIST";
+    } else {
+      this.state.life--;
+      if (this.state.life <= 0) {
+        this.state.phase = "REVEAL";
+      }
+      // this.state.guesses.clear();
+      // this.state.remainingGuesses = this.state.maxGuesses;
+    }
+  }
+
+  private endTurnForNovelist() {
+    if (this.state.givenAllRoundHints) {
+      this.assignHints();
+      if (this.state.round < this.state.maxRounds) {
+        this.state.round++;
+        this.state.remainingHints = this.state.maxHints;
+        this.state.givenAllRoundHints = this.givenAllRoundHints();
+        this.state.phase = "DETECTIVE";
+      } else {
+        this.state.phase = "FINALGUESS";
+        this.state.remainingGuesses = this.state.components.size;
+      }
+    }
+  }
+
+  private endTurnForGameStart() {
+    if (this.state.givenAllInitialHints) {
+      this.assignHints();
+      this.state.phase = "DETECTIVE";
+    }
+  }
+
+  private endTurnForFinalGuess() {
+    if (this.checkGuessesFinal()) {
+      this.state.phase = "REVEAL";
+    } else {
+      this.state.life--;
+      if (this.state.life <= 0) {
+        this.state.phase = "REVEAL";
+      }
+      // this.state.guesses.clear();
+      // this.state.remainingGuesses = this.state.maxGuesses;
+    }
+  }
   private checkGameOver() {
     if (this.state.life == 0) {
       this.state.phase = "NOTRUNNING";
@@ -224,33 +331,9 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
       if (this.state.playerMap.has(client.id) && this.state.playerMap.get(client.id).isNovelist) {
         var component = this.state.components.get(message);
         if (this.state.phase == "GAMESTART") { 
-          if (this.state.hintMode.type == "adjective") {
-            if (component.hintAdj.size == 1) {
-              console.log("Adjective hint already given to component "+ component.value);
-            } else {
-              console.log("Adjective hint "+this.state.hintMode.value+" given to component "+ component.value);
-              component.hintAdj.set(this.state.hintMode.value, this.state.hintMode);
-              this.state.adjOptions.delete(this.state.hintMode.value);
-            } 
-          } else if (this.state.hintMode.type == "noun") {
-            if (component.hintNoun.size == 1) {
-              console.log("Noun hint already given to component "+ component.value);
-            } else {
-              component.hintNoun.set(this.state.hintMode.value, this.state.hintMode);
-              this.state.nounOptions.delete(this.state.hintMode.value);
-            }
-          }
-          this.state.givenAllInitialHints = this.givenAllInitialHints();
+          this.hintAtGameStart(component);
         } else if (this.state.phase == "NOVELIST") {
-          if (this.state.hintMode.type == "adjective") {
-            component.setHintAdj(this.state.hintMode);
-            this.state.adjOptions.delete(this.state.hintMode.value);
-          } else if (this.state.hintMode.type == "noun") {
-            component.setHintNoun(this.state.hintMode);
-            this.state.nounOptions.delete(this.state.hintMode.value);
-          }
-          this.state.remainingHints--;
-          this.state.givenAllRoundHints = this.givenAllRoundHints();
+          this.hintAtNovelist(component); 
         }
         this.state.hintMode = new NullHint();
       } else {
@@ -319,65 +402,13 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
 
     this.onMessage("end-turn", (client, _) => {
       if (this.state.phase === "DETECTIVE") {
-        if (this.checkGuessesRuleOut()) {
-          this.state.guesses.forEach((option) => {
-            var newOption = new (option.constructor as { new (): Option })();
-            Object.assign(newOption, option);
-            newOption.isGuessed = false;
-            newOption.isExcluded = true;
-            this.state.components[option.type].options[option.value] = newOption;
-            console.log(option.value, option.isExcluded, this.state.components[option.type].options[option.value].isExcluded);
-          });
-          this.state.remainingGuesses = this.state.maxGuesses;
-          this.state.guesses.clear();
-          var currentAdjOptionsSize = this.state.adjOptions.size;
-          while (this.state.adjOptions.size < currentAdjOptionsSize + this.state.drawHints) {
-            const adj = getRandomAdj();
-            this.state.adjOptions.set(adj.value, adj);
-          }
-          var currentNounOptionsSize = this.state.nounOptions.size;
-          while (this.state.nounOptions.size < currentNounOptionsSize + this.state.drawHints) {
-            const noun = getRandomNoun();
-            this.state.nounOptions.set(noun.value, noun);
-          }
-          this.state.phase = "NOVELIST";
-        } else {
-          this.state.life--;
-          if (this.state.life <= 0) {
-            this.state.phase = "REVEAL";
-          }
-          // this.state.guesses.clear();
-          // this.state.remainingGuesses = this.state.maxGuesses;
-        }
+        this.endTurnForDetective();
       } else if (this.state.phase === "NOVELIST") {
-        if (this.state.givenAllRoundHints) {
-          this.fixHints();
-          if (this.state.round < this.state.maxRounds) {
-            this.state.round++;
-            this.state.remainingHints = this.state.maxHints;
-            this.state.givenAllRoundHints = this.givenAllRoundHints();
-            this.state.phase = "DETECTIVE";
-          } else {
-            this.state.phase = "FINALGUESS";
-            this.state.remainingGuesses = this.state.components.size;
-          }
-        }
+        this.endTurnForNovelist();
       } else if (this.state.phase === "GAMESTART") {
-        if (this.state.givenAllInitialHints) {
-          this.fixHints();
-          this.state.phase = "DETECTIVE";
-        }
+        this.endTurnForGameStart();
       } else if (this.state.phase === "FINALGUESS") {
-        if (this.checkGuessesFinal()) {
-          this.state.phase = "REVEAL";
-        } else {
-          this.state.life--;
-          if (this.state.life <= 0) {
-            this.state.phase = "REVEAL";
-          }
-          // this.state.guesses.clear();
-          // this.state.remainingGuesses = this.state.maxGuesses;
-        }
+        this.endTurnForFinalGuess();
       }
     });
 
