@@ -17,6 +17,7 @@ function roomExists(client: Client): boolean {
 function askNickname(room: Room) {
   var nicknameModal = document.getElementById("nickname-modal");
   nicknameModal.style.display = "block";
+  // document.getElementById("container").style.display = "block";
   document.getElementById("nickname-btn").onclick = function () {
     const nickname = document.getElementById("nickname").value;
     if (checknickname(nickname)) {
@@ -33,11 +34,12 @@ function readyModalForHost(el: HTMLElement, room: Room) {
   el.textContent = "Game Start";
   room.onStateChange((newState: GameState) => {
     if (newState.phase === "NOTREADY") {
-      el.className = "button button--secondary";
+      el.className = "button--secondary";
       el.removeEventListener("click", () => {});
     } else if (newState.phase === "ALLREADY") {
       el.className = "button";
       el.addEventListener("click", () => {
+        document.getElementById("container").style.display = "none";
         room.send("ready", READY);
       });
     }
@@ -50,7 +52,7 @@ function readyModalForGuest(el: HTMLElement, room: Room) {
     if (el.textContent === "Ready") {
       room.send("ready", READY);
       el.textContent = "Not Ready";
-      el.className = "button button-secondary";
+      el.className = "button-secondary";
     } else {
       room.send("ready", NOT_READY);
       el.className = "button";
@@ -121,26 +123,27 @@ function addHTMLEl(
   elTitle.className = className + "-title";
   elTitle.textContent = title;
   var elList = document.createElement("div");
-  elList.className = "adj-options-list";
+  elList.className = className + "-list";
   el.appendChild(elTitle);
   el.appendChild(elList);
   return elList;
 }
 
 function addLives(newState: GameState, room: Room, gameboard: HTMLElement) {
-  var livesList = addHTMLEl(gameboard, "lives", "Life", 0);
+  var livesList = addHTMLEl(gameboard, "life", "Life", 0);
   for (var i = 0; i < newState.life; i++) {
     var life = document.createElement("div");
-    life.className = "life";
+    life.className = "life-list-item";
     life.textContent = "<3";
     livesList.appendChild(life);
   }
 }
 
 function addGuesses(newState: GameState, room: Room, gameboard: HTMLElement) {
-  var guessesList = addHTMLEl(gameboard, "guesses", "Guesses", 1);
+  var guessesList = addHTMLEl(gameboard, "guess", "Guesses", 1);
   for (var i = 0; i < newState.remainingGuesses; i++) {
     var guess = document.createElement("div");
+    guess.className = "guess-list-item";
     guess.textContent = "<?>";
     guessesList.appendChild(guess);
     // if (newState.guessMode === false &&
@@ -187,17 +190,17 @@ function addAdjOptions(
   room: Room,
   gameboard: HTMLElement
 ) {
-  var adjOptionsList = addHTMLEl(gameboard, "adj-options", "Adjectives", 2);
+  var adjOptionsList = addHTMLEl(gameboard, "adj", "Adjectives", 2);
   newState.adjOptions.forEach((adj) => {
     var adjOption = document.createElement("div");
     adjOption.textContent = adj.value;
     if (enableAdjButton(newState, room)) {
-      adjOption.className = "adj-option button";
+      adjOption.className = "adj-list-item button";
       adjOption.onclick = () => {
         room.send("start-hint", adj.value);
       };
     } else {
-      adjOption.className = "adj-option button--secondary";
+      adjOption.className = "adj-list-item button--secondary";
       adjOption.onclick = () => {};
     }
     adjOptionsList.appendChild(adjOption);
@@ -209,17 +212,17 @@ function addNounOptions(
   room: Room,
   gameboard: HTMLElement
 ) {
-  var nounOptionsList = addHTMLEl(gameboard, "noun-options", "Nouns", 3);
+  var nounOptionsList = addHTMLEl(gameboard, "noun", "Nouns", 3);
   newState.nounOptions.forEach((noun) => {
     var nounOption = document.createElement("div");
     nounOption.textContent = noun.value;
     if (enableNounButton(newState, room)) {
-      nounOption.className = "noun-option button";
+      nounOption.className = "noun-list-item button";
       nounOption.onclick = () => {
         room.send("start-hint", noun.value);
       };
     } else {
-      nounOption.className = "noun-option button--secondary";
+      nounOption.className = "noun-list-item button--secondary";
       nounOption.onclick = () => {};
     }
     nounOptionsList.appendChild(nounOption);
@@ -228,22 +231,19 @@ function addNounOptions(
 
 function addCompOptions(newState: GameState, room: Room, component: HTMLElement, comp: any): HTMLElement {
   var componentOptions = document.createElement("div");
-  componentOptions.className = "component-options";
+  componentOptions.className = "option-list";
   comp.options.forEach((option) => {
     var optionEl = document.createElement("div");
-    var optionClassDefault = "option";
+    var optionClassDefault = "option-list-item";
     if (option.isSolution && newState.playerMap[room.sessionId].isNovelist) {
       optionClassDefault += " option--solution";
     }
     var optionClassGuessed = "";
     if (option.isExcluded) {
-      console.log("excluded option");
       optionClassGuessed = " option--excluded";
     } else if (option.isGuessed) {
-      console.log("guessed option");
       optionClassGuessed = " option--guessed";
     } else {
-      console.log("not guessed option");
       optionClassGuessed = "";
     }
     optionEl.className = optionClassDefault;
@@ -274,10 +274,10 @@ function addCompOptions(newState: GameState, room: Room, component: HTMLElement,
 
 function addCompAdj(room: Room, component: HTMLElement, comp: any): HTMLElement {
   var componentAdj = document.createElement("div");
-  componentAdj.className = "component-adj";
+  componentAdj.className = "adj-component";
   comp.hintAdj.forEach((adj, key) => {
     var adjEl = document.createElement("div");
-    adjEl.className = "option";
+    adjEl.className = "adj-list-item";
     adjEl.textContent = key;
     if (!adj.assigned) {
       adjEl.onclick = () => {
@@ -293,10 +293,10 @@ function addCompAdj(room: Room, component: HTMLElement, comp: any): HTMLElement 
 
 function addCompNoun(room: Room, component: HTMLElement, comp: any): HTMLElement {
   var componentNoun = document.createElement("div");
-  componentNoun.className = "component-noun";
+  componentNoun.className = "noun-component";
   comp.hintNoun.forEach((noun, key) => {
     var nounEl = document.createElement("div");
-    nounEl.className = "option";
+    nounEl.className = "noun-list-item";
     nounEl.textContent = key;
     if (!noun.assigned) {
       nounEl.onclick = () => {
@@ -315,11 +315,11 @@ function addComponents(
   room: Room,
   gameboard: HTMLElement
 ) {
-  var componentsList = addHTMLEl(gameboard, "components", "Components", 4);
+  var componentsList = addHTMLEl(gameboard, "component", "Components", 4);
   newState.components.forEach((comp, key) => {
     var component = document.createElement("div");
     var componentTitle = document.createElement("div");
-    componentTitle.className = "component-title";
+    componentTitle.className = "component-list-item-title";
     componentTitle.textContent = key;
     component.appendChild(componentTitle);
     if (enableCompButton(newState, room, comp)) {
@@ -347,10 +347,10 @@ function addEndTurnButtonForNovelist(newState: GameState, room: Room, guessButto
     guessButton.onclick = () => {
       room.send("end-turn", null);
     };
-    guessButton.className = "button guess-button";
+    guessButton.className = "button";
   } else {
     guessButton.onclick = () => {};
-    guessButton.className = "button--secondary guess-button";
+    guessButton.className = "button--secondary";
   }
 }
 
@@ -360,10 +360,10 @@ function addEndTurnButtonForDetective(newState: GameState, room: Room, guessButt
     guessButton.onclick = () => {
       room.send("end-turn", null);
     };
-    guessButton.className = "button guess-button";
+    guessButton.className = "button";
   } else {
     guessButton.onclick = () => {};
-    guessButton.className = "button--secondary guess-button";
+    guessButton.className = "button--secondary";
   }
 }
 

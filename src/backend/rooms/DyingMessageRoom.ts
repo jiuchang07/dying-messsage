@@ -170,7 +170,6 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
 
   private hintAtGameStart(component: Component) {
     if (this.state.hintMode.type == "adjective") {
-      console.log("Adjective hint "+this.state.hintMode.value+" given to component "+ component.value);
       component.hintAdj.set(this.state.hintMode.value, this.state.hintMode);
       this.state.adjOptions.delete(this.state.hintMode.value);
     } else if (this.state.hintMode.type == "noun") {
@@ -212,7 +211,6 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
       newOption.isGuessed = false;
       newOption.isExcluded = true;
       this.state.components[option.type].options[option.value] = newOption;
-      console.log(option.value, option.isExcluded, this.state.components[option.type].options[option.value].isExcluded);
     });
   }
 
@@ -350,7 +348,6 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     });
 
     this.onMessage("guess", (client, message:Option) => {
-      console.log("received guess", message.value);
       var option = this.state.components[message.type].options[message.value];
       option.isGuessed = true;
       this.state.guesses.add(option);
@@ -362,12 +359,10 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     });
 
     this.onMessage("cancel-guess", (client, message:Option) => {
-      console.log("received cancel-guess", message.value);
       var option = this.state.components[message.type].options[message.value];
       this.state.guesses.delete(option);
       var newOption = new (option.constructor as { new (): Option })();
       Object.assign(newOption, option);
-      console.log(newOption instanceof Option);
       newOption.isGuessed = false;
       this.state.components[message.type].options[message.value] = newOption;
       this.state.remainingGuesses++;

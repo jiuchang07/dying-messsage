@@ -8,10 +8,11 @@
 			charset="UTF-8"
     />
     <base href="/">
-    <link rel="stylesheet" href="../play_files/start-61d1577b.css" />
-    <link rel="stylesheet" href="../play_files/__layout.svelte-c8d5603a.css" />
-    <link rel="stylesheet" href="../play_files/create.svelte-efd9609b.css" />
-    <link rel="stylesheet" href="../play_files/HeroLayout-1dd73454.css" />
+    <!-- <link rel="stylesheet" href="../play_files/start-61d1577b.css" /> -->
+    <link rel="stylesheet" href="../play_files/style.css" />
+    <!-- <link rel="stylesheet" href="../play_files/__layout.svelte-c8d5603a.css" /> -->
+    <!-- <link rel="stylesheet" href="../play_files/create.svelte-efd9609b.css" /> -->
+    <!-- <link rel="stylesheet" href="../play_files/HeroLayout-1dd73454.css" /> -->
     <script type="text/javascript" src="https://unpkg.com/colyseus.js@^0.14.13/dist/colyseus.js"></script>
     <script type="text/typescript" src="./htmls/readystate.ts"> </script>
     <!-- <script type="text/typescript" src="../../backend/rooms/schema/Hint.ts"></script> -->
@@ -21,10 +22,18 @@
   </head>
   <body tabindex="-1">
 		<main>
+      <div id="container" class="container">
+      </div>
       <div id="nickname-modal" class="modal nickname-modal">
         <div class="modal-content">
           <input id="nickname" value="">
-          <button id="nickname-btn" class="button">Submit</button>
+          <button id="nickname-btn" class="button">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Submit
+          </button>
         </div>
       </div>
       <div id="ready-modal" class="modal ready-modal ">
