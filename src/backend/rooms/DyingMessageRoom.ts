@@ -1,3 +1,4 @@
+import { MapSchema } from "@colyseus/schema";
 import { Room, Delayed, Client } from "colyseus";
 import { DyingMessageRoomState } from "./schema/DyingMessageRoomState";
 import { Player } from "./schema/Player";
@@ -12,7 +13,9 @@ const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   private DEFAULT_LIFE = 4;
-  public DEFAULT_COMPONENTS = ["motives", "occupations"]
+  public DEFAULT_COMPONENTS = new MapSchema<string[]> ({"motives": ["jealousy", "greed", "revenge", "anger", "love", "hate", "envy", "fear", "desperation", "obsession", "pride", "power", "lust", "betrayal", "self-defense", "insanity", "protection", "accident", "blackmail", "extortion"], 
+  "occupations": ["butler", "maid", "gardener", "cook", "guest", "chauffeur", "nanny", "housekeeper", "security guard", "personal assistant", "doctor", "nurse", "lawyer", "accountant", "teacher", "engineer", "scientist", "artist", "musician", "writer"],
+  "weapons": ["knife", "gun", "hammer", "poison", "rope", "candlestick", "wrench", "lead pipe", "revolver", "screwdriver", "axe", "crowbar", "shovel", "bat", "golf club", "tire iron", "chainsaw", "scissors", "letter opener", "fire poker"]});
   public DEFAULT_OPTIONS = 8;
   private DEFAULT_GUESSES = 2;
   private DEFAULT_ROUNDS = 3;
@@ -389,6 +392,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   onJoin (client: Client, options: any) {
     console.log(client.sessionId, "joined!");
     this.state.playerMap.set(client.sessionId, new Player(client.sessionId, null, false, false, options["host"]));
+    console.log(this.state.components["motives"].options.size);
   }
 
   onLeave (client: Client, consented: boolean) {

@@ -232,7 +232,8 @@ function addNounOptions(
 function addCompOptions(newState: GameState, room: Room, component: HTMLElement, comp: any): HTMLElement {
   var componentOptions = document.createElement("div");
   componentOptions.className = "option-list";
-  comp.options.forEach((option) => {
+  console.log(comp.options);
+  comp.options.forEach((option, key) => {
     var optionEl = document.createElement("div");
     var optionClassDefault = "option-list-item";
     if (option.isSolution && newState.playerMap[room.sessionId].isNovelist) {
@@ -316,6 +317,7 @@ function addComponents(
   gameboard: HTMLElement
 ) {
   var componentsList = addHTMLEl(gameboard, "component", "Components", 4);
+  console.log(newState.components, newState.components["motives"].options);
   newState.components.forEach((comp, key) => {
     var component = document.createElement("div");
     var componentTitle = document.createElement("div");

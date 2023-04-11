@@ -1,9 +1,9 @@
 import {Schema, type} from "@colyseus/schema";
 // import {Component} from "./Component";
  
-export abstract class Option extends Schema {
+export class Option extends Schema {
     @type("string")
-    abstract value: string;
+    value: string;
 
     // @type(Component)
     // component: Component;
@@ -23,9 +23,11 @@ export abstract class Option extends Schema {
     @type("string")
     type: string;
 
-    constructor() {
+    constructor(value: string, type: string, isInGame: boolean = false) {
         super();
-
+        this.value = value;
+        this.isInGame = isInGame;
+        this.type = type;
         // this.component = component;
     }
     

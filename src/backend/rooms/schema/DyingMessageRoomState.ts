@@ -1,7 +1,7 @@
-import { Schema, CollectionSchema, MapSchema, Context, type } from "@colyseus/schema";
+import { Schema, CollectionSchema, MapSchema, SetSchema, type } from "@colyseus/schema";
 import { getRandomAdj, Adjective } from "./Adjective";
 import { getRandomNoun, Noun } from "./Noun";
-import { Component } from "./Component";
+import { Component, createOptions } from "./Component";
 import { Player } from "./Player";
 import { Hint, NullHint } from "./Hint";
 import { Option } from "./Option";
@@ -57,9 +57,6 @@ export class DyingMessageRoomState extends Schema {
   @type( Hint )
   hintMode: Hint;
   
-  // @type( Adjective )
-  // nounMode: Adjective;
-
   @type("boolean")
   guessMode: boolean;
 
@@ -83,7 +80,7 @@ export class DyingMessageRoomState extends Schema {
 
   constructor(
     life: number,
-    components: string[], 
+    components: MapSchema<string[]>, 
     options: number, 
     rounds: number,
     initial_hint_options: number,
@@ -93,19 +90,10 @@ export class DyingMessageRoomState extends Schema {
     numGuesses: number,
   ) {
     super();
-    components.forEach(c => {this.components.set(c, new Component(c, options))})
+    components.forEach((o, c) => {this.components.set(c, new Component(c, o))})
+    this.setOptions(options);
     this.life = life;
-    var num:number = initial_hint_options; 
-    var i:number; 
-    while (this.adjOptions.size < num) {
-      const adj = getRandomAdj();
-      this.adjOptions.set(adj.value, adj);
-    }
-    num = initial_hint_options;
-    while (this.nounOptions.size < num) {
-      const noun = getRandomNoun();
-      this.nounOptions.set(noun.value, noun);
-    }
+    this.setHints(initial_hint_options);
     this.round = 1;
     this.maxRounds = rounds;
     this.phase = "NOTREADY";
@@ -116,8 +104,6 @@ export class DyingMessageRoomState extends Schema {
     this.maxHints = roundHints;
     this.hintMode = new NullHint();
     this.drawHints = drawHints;
-    // this.adjMode = null;
-    // this.nounMode = null;
     this.guessMode = false;
     this.givenAllInitialHints = false;
     this.givenAllInitialAdjHints = false;
@@ -125,11 +111,27 @@ export class DyingMessageRoomState extends Schema {
     this.givenAllRoundHints = false;
   }
 
+  public setOptions(options: number): void {
+    this.components.forEach((c, _) => {
+      var optionsInGame: SetSchema<string> = new SetSchema<string>();
+      while (optionsInGame.size < options) {
+        var option = c.allOptions[Math.floor(Math.random() * c.allOptions.length)];
+        optionsInGame.add(option);
+      }
+    });
+  }
+
+  public setHints(initial_hint_options: number): void {
+    var num:number = initial_hint_options; 
+    while (this.adjOptions.size < num) {
+      const adj = getRandomAdj();
+      this.adjOptions.set(adj.value, adj);
+    }
+    num = initial_hint_options;
+    while (this.nounOptions.size < num) {
+      const noun = getRandomNoun();
+      this.nounOptions.set(noun.value, noun);
+    }
+  }
+
 }
-// export const givenAllHints = (state:DyingMessageRoomState) => {
-//   state.components.forEach((comp, key) => {
-//     if (comp.hintAdj.length == 0 || comp.hintNoun.length == 0)
-//       return false;
-//   });
-//   return true;
-// }

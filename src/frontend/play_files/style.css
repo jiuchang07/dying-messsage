@@ -1,0 +1,376 @@
+:root {
+  --primary: rgb(255, 20, 20);
+  --primary-hover: rgb(250, 46, 46);
+  --secondary-button: rgb(255, 229, 229);
+  --secondary-button-hover: rgb(255, 204, 204);
+  --modal: rgba(0, 0, 0, 1);
+  --adj-button: rgb(146, 151, 238);
+  --adj-button-hover: rgb(176, 179, 242);
+  --noun-button: rgb(238, 146, 146);
+  --noun-button-hover: rgb(242, 176, 176);
+  --solution: rgb(0, 149, 255);
+  --guessed: rgb(146, 238, 146);
+  --guessed-hover: rgb(176, 242, 176);
+  --excluded: rgb(3, 44, 3);
+  --excluded-hover: rgb(4, 67, 4);
+  --component: rgb(4, 67, 4);
+  --component-hover: rgb(3, 44, 3);
+  --dark: #1b1b1b;
+  --borderradius: 0.25em;
+  --bright-background: rgba(255, 239, 239, 0);
+  --dim-background: rgba(68, 1, 1, 0.4);
+  --red-background: rgba(84, 2, 2, 1);
+  --team-blue: rgb(30, 14, 208);
+}
+
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Satire';
+  background: linear-gradient(#301414, var(--red-background));
+}
+
+.container {
+    display: block; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 100; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: unset;  /* Enable scroll if needed */
+    background-color: var(--red-background); /* Black w/ opacity */
+}
+
+.modal {
+  position: absolute;
+  margin: auto;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  padding: 40px;
+  transform: translate(-50%, -50%);
+  background: var(--modal);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+  border-radius: 0px;
+}
+
+.modal h2 {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align: center;
+}
+
+.modal .modal-content {
+  position: relative;
+}
+
+.modal .modal-content input {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+
+.modal .modal-content label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: 0.5s;
+}
+
+.modal .modal-content input:focus ~ label,
+.modal .modal-content input:valid ~ label {
+  top: -20px;
+  left: 0;
+  color: var(--primary);
+  font-size: 12px;
+}
+
+.modal button {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  color: var(--primary);
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  background-color: var(--modal);
+  overflow: hidden;
+  transition: 0.5s;
+  margin-top: 40px;
+  letter-spacing: 4px;
+}
+
+.modal button:hover {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 5px;
+  border-color:transparent;
+  box-shadow: 0 0 5px var(--primary), 0 0 25px var(--primary), 0 0 50px var(--primary);
+}
+
+.modal button span {
+  position: absolute;
+  display: block;
+}
+
+.modal button span:nth-child(1) {
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary));
+  animation: btn-anim1 1s linear infinite;
+}
+
+@keyframes btn-anim1 {
+  0% {
+    left: -100%;
+  }
+  50%,
+  100% {
+    left: 100%;
+  }
+}
+
+.modal button span:nth-child(2) {
+  top: -100%;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, var(--primary));
+  animation: btn-anim2 1s linear infinite;
+  animation-delay: 0.25s;
+}
+
+@keyframes btn-anim2 {
+  0% {
+    top: -100%;
+  }
+  50%,
+  100% {
+    top: 100%;
+  }
+}
+
+.modal button span:nth-child(3) {
+  bottom: 0;
+  right: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(270deg, transparent, var(--primary));
+  animation: btn-anim3 1s linear infinite;
+  animation-delay: 0.5s;
+}
+
+@keyframes btn-anim3 {
+  0% {
+    right: -100%;
+  }
+  50%,
+  100% {
+    right: 100%;
+  }
+}
+
+.modal button span:nth-child(4) {
+  bottom: -100%;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(360deg, transparent, var(--primary));
+  animation: btn-anim4 1s linear infinite;
+  animation-delay: 0.75s;
+}
+
+@keyframes btn-anim4 {
+  0% {
+    bottom: -100%;
+  }
+  50%,
+  100% {
+    bottom: 100%;
+  }
+}
+
+.nickname-modal {
+  z-index: 102;
+}
+
+.ready-modal {
+  z-index: 101;
+}
+
+/* .button {
+    padding: 0.7em 1.2em;
+    border: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: var(--borderradius);
+    text-decoration: none;
+    box-shadow: 0 0 1em -0.3em #00000080;
+    transition: box-shadow 80ms;
+}
+
+.button:hover {
+    box-shadow: 0 0 1em -0.3em #000c;
+    background-color: var(--primary-hover);
+    color: #fff;
+} */
+.modal .button--secondary {
+    position: relative;
+    display: inline-block;
+    padding: 10px 20px;
+    color: var(--secondary);
+    font-size: 16px;
+    text-decoration: none;
+    text-transform: uppercase;
+    background-color: var(--modal);
+    overflow: hidden;
+    transition: 0.5s;
+    margin-top: 40px;
+    letter-spacing: 4px;
+  }
+  
+  .modal .button--secondary:hover {
+    background: var(--secondary-button-hover);
+    color: #fff;
+    border-radius: 5px;
+    border-color:transparent;
+    box-shadow: 0 0 5px var(--primary), 0 0 25px var(--primary), 0 0 50px var(--primary);
+  }
+.button--secondary {
+  padding: 0.7em 1.2em;
+  background-color: var(--secondary-button);
+  color: var(--dark);
+  box-shadow: none;
+}
+
+.button--secondary:hover {
+  box-shadow: none;
+  background-color: var(--secondary-button-hover);
+  color: var(--dark);
+}
+
+.life {
+}
+
+.life-title {
+}
+
+.life-list {
+}
+
+.life-list-item {
+}
+
+.guess {
+}
+
+.guess-title {
+}
+
+.guess-list {
+}
+
+.guess-list-item {
+}
+
+.adj {
+  background-color: var(--adj-button);
+}
+
+.adj-title {
+  color: var(--dark);
+}
+
+.adj-list {
+}
+
+.adj-list-item {
+}
+
+.adj-component {
+}
+
+.noun {
+  background-color: var(--noun-button);
+}
+
+.noun-title {
+  color: var(--dark);
+}
+
+.noun-list {
+}
+
+.noun-list-item {
+}
+
+.noun-component {
+}
+
+.component {
+  background-color: var(--component);
+}
+
+.component-title {
+  color: var(--dark);
+}
+
+.component-list {
+}
+
+.component-list-item {
+}
+
+.component-list-item-title {
+}
+
+.option-list {
+}
+
+.option-list-item {
+}
+
+.option--solution {
+  background-color: var(--solution);
+}
+
+.option--excluded {
+  background-color: var(--excluded);
+}
+
+.option--guessed {
+  background-color: var(--guessed);
+  color: var(--dark);
+}
+
+.option-button {
+  padding: 0.7em 1.2em;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.option-cancel-button {
+  padding: 0.7em 1.2em;
+  cursor: pointer;
+  box-shadow: none;
+}

@@ -1,8 +1,9 @@
-import {Schema, ArraySchema, MapSchema, type} from "@colyseus/schema";
+import {Schema, SetSchema, MapSchema, type} from "@colyseus/schema";
 import {Option} from "./Option";
 import {Hint} from "./Hint";
 import { Adjective } from "./Adjective";
 import { Noun } from "./Noun";
+import { create } from "@colyseus/core/build/MatchMaker";
 
 export class Component extends Schema {
     @type("string")
@@ -20,47 +21,12 @@ export class Component extends Schema {
     @type("boolean")
     finalGuessed: boolean = false;
 
-    constructor(value: string, numOptions: number) {
+    @type([ "string" ])
+    allOptions: string[] = [];
+
+    constructor(value: string, allOptions: string[]) {
         super();
-        // var options:any[];
-        // if (value == "motives") {
-        //     options = MOTIVES;
-        // } else if (value == "occupations") {
-        //     options = OCCUPATIONS;
-        // }
-        // var num:number = numOptions; 
-        // var i:number; 
-        // for (i = num;i>=1;i--) {
-        //     this.options.push(getRandomOption(options));
-        // }
-        var num:number = numOptions; 
-        var i:number; 
-        var valuesSoFar:string[] = [];
-        while (this.options.size < num) {
-            if (value == "motives") {
-                var option = getRandomMotives();
-            } else if (value == "occupations") {
-                var option = getRandomOccupations();
-            }
-          this.options.set(option.value, option);
-        }
-        // for (i = num;i>=1;i--) {
-        //     if (value == "motives") {
-        //         var option = getRandomMotives();
-        //         while (valuesSoFar.includes(option.value)) {
-        //             option = getRandomMotives();
-        //         } 
-        //     } else if (value == "occupations") {
-        //         var option = getRandomOccupations();
-        //         while (valuesSoFar.includes(option.value)) {
-        //             option = getRandomOccupations();
-        //         } 
-        //     }
-        //     this.options.set(option.value, option);
-                // valuesSoFar.push(option.value);
-        // }
-        var options = Array.from(this.options.values());
-        options[Math.floor(Math.random() * this.options.size)].setToSolution();
+        this.allOptions = allOptions;
         this.value = value;
     }
 
@@ -77,6 +43,44 @@ export class Component extends Schema {
     }
 }
 
+export function createOptions(options: SetSchema<string>, type: string, c:Component) {
+    c.options = new MapSchema<Option>();
+    const solutionIdx = Math.floor(Math.random() * options.size);
+    let i = 0;
+    options.forEach((option) => {
+        c.options[option] = new Option(option, type, true);
+        if (i == solutionIdx) {
+            c.options[option].setToSolution();
+        }
+        i++;
+    });
+    console.log(c.options);
+}
+
+
+/* 
+Return a dictionary from the value property of the instance to the instance of the class in the given list of classes and the size of the dictionary.
+*/
+// export function createOptions(classes: any[], size: number) {
+//     const options: MapSchema<Option>= new MapSchema<Option>();//{[key: string]: Option} = {};
+//     for (let i = 0; i < size; i++) {
+//         const option = getRandomOption(classes);
+//         options[option.value] = option;
+//         console.log((new classes[0]()).value, (new classes[1]()).value, (new classes[2]()).value);
+//     }
+//     return options;
+// }
+
+/* 
+Get an instance of a random class from the given list of classes.
+*/
+export function getRandomOption(classes: any[]) {
+    const idx = Math.floor(Math.random() * classes.length);
+    const nextBlock = classes[idx];
+    // classes = classes.splice(idx, 1);
+    return new nextBlock();
+}
+
 export const getRandomMotives = () => {
     const _getRandomBlock = <T extends Option>(type: { new(): T }): T => {
         return new type();
@@ -91,15 +95,38 @@ export const getRandomOccupations = () => {
     const nextBlock = OCCUPATIONS[Math.floor(Math.random() * OCCUPATIONS.length)];
     return _getRandomBlock(nextBlock);
 }
-export const getRandomOption = (options:any[]) => {
-    const _getRandomBlock = <T extends Option>(types: { new(): T }): T => {
-        return new types();
-    }
-    const idx = Math.floor(Math.random() * options.length);
-    const nextBlock = options[idx];
-    options = options.splice(idx, 1);
-    return _getRandomBlock(nextBlock);
-}
+// export const getRandomOption = (options:any[]) => {
+//     const _getRandomBlock = <T extends Option>(types: { new(): T }): T => {
+//         return new types();
+//     }
+//     const idx = Math.floor(Math.random() * options.length);
+//     const nextBlock = options[idx];
+//     options = options.splice(idx, 1);
+//     return _getRandomBlock(nextBlock);
+// }
+
+/*
+    Create a list of classes that extend Option based on a list of strings and a string that indicates the type of all the options. Each string is the name of the class and VALUE property of the class. 
+    The three properties of the class, isInGame, isExcluded, and isSolution, are set to true, false, and false, respectively, by default. 
+*/
+// export const createClasses = (options:string[], type:string) => {
+//     var i:number;
+//     var classes:any[] = [];
+//     for (i = 0; i < options.length; i++) {
+//         var option = options[i];
+//         var optionClass = class extends Option {
+//             value = option;
+//             isInGame = true;
+//             type = type;
+//             constructor() {
+//                 super();
+//             }
+//         }
+//         classes.push(optionClass);
+//     }
+//     return classes;
+// }
+
 
 // Library of different options for different components
 const MOTIVES = [
