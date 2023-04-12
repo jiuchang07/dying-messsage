@@ -114,13 +114,14 @@ body {
   overflow: hidden;
   transition: 0.5s;
   margin-top: 40px;
+  cursor: pointer;
   letter-spacing: 4px;
 }
 
 .modal .button:hover {
   background: var(--primary);
   color: #fff;
-  border-radius: 5px;
+  border-radius: 0px;
   border-color:transparent;
   box-shadow: 0 0 5px var(--primary), 0 0 25px var(--primary), 0 0 50px var(--primary);
 }
@@ -255,7 +256,7 @@ body {
 .modal .button--secondary:hover {
   background-color: var(--secondary-button-hover);
   color: var(--dark);
-  border-radius: 5px;
+  border-radius: 0px;
   border-color:transparent;
   /* box-shadow: 0 0 5px var(--primary), 0 0 25px var(--primary), 0 0 50px var(--primary); */
 }
@@ -263,6 +264,10 @@ body {
 .modal .not-ready {
   background-color: var(--not-ready);
   cursor: pointer;
+}
+.modal .not-ready:hover {
+  background-color: var(--secondary-button-hover);
+  box-shadow: 0 0 5px var(--secondary-button-hover), 0 0 25px var(--secondary-button-hover), 0 0 50px var(--secondary-button-hover);
 }
 
 /* .button--secondary {

@@ -39,7 +39,6 @@ function readyModalForHost(el: HTMLElement, room: Room) {
     } else if (newState.phase === "ALLREADY") {
       el.className = "button";
       el.addEventListener("click", () => {
-        document.getElementById("container").style.display = "none";
         room.send("ready", READY);
       });
     }
@@ -64,7 +63,8 @@ function readyModalForGuest(el: HTMLElement, room: Room) {
 function removeReadyModal(readyModal: HTMLElement, room: Room) {
   room.onStateChange((newState: GameState) => {
     if (newState.phase === "GAMESTART") {
-      readyModal.style.display = "none";
+        document.getElementById("container").style.display = "none";
+        readyModal.style.display = "none";
     }
   });
 }
