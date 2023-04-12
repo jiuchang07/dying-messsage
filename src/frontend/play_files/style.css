@@ -4,6 +4,7 @@
   --secondary-button: rgb(255, 229, 229);
   --secondary-button-hover: rgb(255, 204, 204);
   --modal: rgba(0, 0, 0, 1);
+  --not-ready: rgb(255, 112, 112);
   --adj-button: rgb(146, 151, 238);
   --adj-button-hover: rgb(176, 179, 242);
   --noun-button: rgb(238, 146, 146);
@@ -101,7 +102,7 @@ body {
   font-size: 12px;
 }
 
-.modal button {
+.modal .button {
   position: relative;
   display: inline-block;
   padding: 10px 20px;
@@ -116,7 +117,7 @@ body {
   letter-spacing: 4px;
 }
 
-.modal button:hover {
+.modal .button:hover {
   background: var(--primary);
   color: #fff;
   border-radius: 5px;
@@ -124,12 +125,12 @@ body {
   box-shadow: 0 0 5px var(--primary), 0 0 25px var(--primary), 0 0 50px var(--primary);
 }
 
-.modal button span {
+.modal .button span {
   position: absolute;
   display: block;
 }
 
-.modal button span:nth-child(1) {
+.modal .button span:nth-child(1) {
   top: 0;
   left: -100%;
   width: 100%;
@@ -148,7 +149,7 @@ body {
   }
 }
 
-.modal button span:nth-child(2) {
+.modal .button span:nth-child(2) {
   top: -100%;
   right: 0;
   width: 2px;
@@ -168,7 +169,7 @@ body {
   }
 }
 
-.modal button span:nth-child(3) {
+.modal .button span:nth-child(3) {
   bottom: 0;
   right: -100%;
   width: 100%;
@@ -188,7 +189,7 @@ body {
   }
 }
 
-.modal button span:nth-child(4) {
+.modal .button span:nth-child(4) {
   bottom: -100%;
   left: 0;
   width: 2px;
@@ -224,6 +225,8 @@ body {
     font-weight: 600;
     font-size: 1rem;
     border-radius: var(--borderradius);
+    background-color: var(--primary);
+    color: #fff;
     text-decoration: none;
     box-shadow: 0 0 1em -0.3em #00000080;
     transition: box-shadow 80ms;
@@ -235,28 +238,34 @@ body {
     color: #fff;
 } */
 .modal .button--secondary {
-    position: relative;
-    display: inline-block;
-    padding: 10px 20px;
-    color: var(--secondary);
-    font-size: 16px;
-    text-decoration: none;
-    text-transform: uppercase;
-    background-color: var(--modal);
-    overflow: hidden;
-    transition: 0.5s;
-    margin-top: 40px;
-    letter-spacing: 4px;
-  }
-  
-  .modal .button--secondary:hover {
-    background: var(--secondary-button-hover);
-    color: #fff;
-    border-radius: 5px;
-    border-color:transparent;
-    box-shadow: 0 0 5px var(--primary), 0 0 25px var(--primary), 0 0 50px var(--primary);
-  }
-.button--secondary {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--secondary-button);
+  color: var(--dark);
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: 0.5s;
+  margin-top: 40px;
+  letter-spacing: 4px;
+}
+
+.modal .button--secondary:hover {
+  background-color: var(--secondary-button-hover);
+  color: var(--dark);
+  border-radius: 5px;
+  border-color:transparent;
+  /* box-shadow: 0 0 5px var(--primary), 0 0 25px var(--primary), 0 0 50px var(--primary); */
+}
+
+.modal .not-ready {
+  background-color: var(--not-ready);
+  cursor: pointer;
+}
+
+/* .button--secondary {
   padding: 0.7em 1.2em;
   background-color: var(--secondary-button);
   color: var(--dark);
@@ -267,7 +276,7 @@ body {
   box-shadow: none;
   background-color: var(--secondary-button-hover);
   color: var(--dark);
-}
+} */
 
 .life {
 }

@@ -392,7 +392,6 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   onJoin (client: Client, options: any) {
     console.log(client.sessionId, "joined!");
     this.state.playerMap.set(client.sessionId, new Player(client.sessionId, null, false, false, options["host"]));
-    console.log(this.state.components["motives"].options.size);
   }
 
   onLeave (client: Client, consented: boolean) {

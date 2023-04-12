@@ -52,7 +52,7 @@ function readyModalForGuest(el: HTMLElement, room: Room) {
     if (el.textContent === "Ready") {
       room.send("ready", READY);
       el.textContent = "Not Ready";
-      el.className = "button-secondary";
+      el.className = "button--secondary not-ready";
     } else {
       room.send("ready", NOT_READY);
       el.className = "button";
@@ -232,7 +232,6 @@ function addNounOptions(
 function addCompOptions(newState: GameState, room: Room, component: HTMLElement, comp: any): HTMLElement {
   var componentOptions = document.createElement("div");
   componentOptions.className = "option-list";
-  console.log(comp.options);
   comp.options.forEach((option, key) => {
     var optionEl = document.createElement("div");
     var optionClassDefault = "option-list-item";
@@ -317,7 +316,6 @@ function addComponents(
   gameboard: HTMLElement
 ) {
   var componentsList = addHTMLEl(gameboard, "component", "Components", 4);
-  console.log(newState.components, newState.components["motives"].options);
   newState.components.forEach((comp, key) => {
     var component = document.createElement("div");
     var componentTitle = document.createElement("div");
