@@ -57,6 +57,9 @@ export class DyingMessageRoomState extends Schema {
   @type( Hint )
   hintMode: Hint;
   
+  // @type( Adjective )
+  // nounMode: Adjective;
+
   @type("boolean")
   guessMode: boolean;
 
@@ -104,25 +107,28 @@ export class DyingMessageRoomState extends Schema {
     this.maxHints = roundHints;
     this.hintMode = new NullHint();
     this.drawHints = drawHints;
+    // this.adjMode = null;
+    // this.nounMode = null;
     this.guessMode = false;
     this.givenAllInitialHints = false;
     this.givenAllInitialAdjHints = false;
     this.givenAllInitialNounHints = false;
     this.givenAllRoundHints = false;
   }
-
-  public setOptions(options: number): void {
-    this.components.forEach((c, _) => {
+  
+  private setOptions(options: number): void {
+    this.components.forEach((c, k) => {
       var optionsInGame: SetSchema<string> = new SetSchema<string>();
       while (optionsInGame.size < options) {
         var option = c.allOptions[Math.floor(Math.random() * c.allOptions.length)];
         optionsInGame.add(option);
       }
+      createOptions(optionsInGame, k, c); 
     });
   }
-
-  public setHints(initial_hint_options: number): void {
+  private setHints(initial_hint_options: number): void {
     var num:number = initial_hint_options; 
+    var i:number; 
     while (this.adjOptions.size < num) {
       const adj = getRandomAdj();
       this.adjOptions.set(adj.value, adj);
@@ -133,5 +139,4 @@ export class DyingMessageRoomState extends Schema {
       this.nounOptions.set(noun.value, noun);
     }
   }
-
 }
