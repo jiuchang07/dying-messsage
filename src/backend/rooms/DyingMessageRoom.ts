@@ -17,7 +17,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   "occupations": ["butler", "maid", "gardener", "cook", "guest", "chauffeur", "nanny", "housekeeper", "security guard", "personal assistant", "doctor", "nurse", "lawyer", "accountant", "teacher", "engineer", "scientist", "artist", "musician", "writer"],
   "weapons": ["knife", "gun", "hammer", "poison", "rope", "candlestick", "wrench", "lead pipe", "revolver", "screwdriver", "axe", "crowbar", "shovel", "bat", "golf club", "tire iron", "chainsaw", "scissors", "letter opener", "fire poker"]});
   public DEFAULT_OPTIONS = 8;
-  private DEFAULT_GUESSES = 2;
+  private DEFAULT_GUESSES = 6;
   private DEFAULT_ROUNDS = 3;
   private DEFAULT_INITIAL_HINT_OPTIONS = 6; // Default number of adjectives and nouns to draw at setup
   // private DEFAULT_INITIAL_HINTS = 3; // Default number of adjectives and nouns to give at setup
@@ -26,18 +26,11 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
 
   public playerMap: Map<string, Player>;
 
-  private gameLoop!: Delayed;
-
-
   constructor() {
       super();
   }
 
-	public presence: any;
 	public roomId: string;
-  // The channel where we register the room IDs.
-  // This can be anything you want, it doesn't have to be `$mylobby`.
-  private LOBBY_CHANNEL = "$mylobby";
 
   // Generate a single 4 capital letter room ID.
   generateRoomIdSingle(): string {
@@ -84,20 +77,12 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     return true;
   }
 
-  private startGame() {
-    
-  }
-
   private startHintMode(hint:string) {
       this.state.hintMode = this.state.adjOptions.get(hint);
       if (this.state.hintMode == null) {
         this.state.hintMode = this.state.nounOptions.get(hint);
       }
   }
-
-  // private startNounMode(noun:Noun) {
-  //   this.state.nounMode = noun;
-  // }
 
   private startGuessMode() {
     this.state.guessMode = true;
@@ -314,8 +299,6 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
       if (this.allPlayersReady()) {
           if (this.assignRoles()) {
             this.state.phase = "ALLREADY";
-            this.startGame();
-            // this.startGameLoop();
           }
       } else {
           this.state.phase = "NOTREADY";
