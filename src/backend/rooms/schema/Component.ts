@@ -54,7 +54,6 @@ export function createOptions(options: SetSchema<string>, type: string, c:Compon
         }
         i++;
     });
-    console.log(c.options);
 }
 
 

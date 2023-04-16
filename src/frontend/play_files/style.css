@@ -466,6 +466,18 @@ body {
   background-image: url('https://assets.codepen.io/217233/hack--firewallcardback_1.png');
   color: var(--dark);
 }
+/* .option--solution {
+  background-image: url(../../images/Gardener_solution.png);
+}
+
+.option--excluded {
+  background-image: url(../../images/logo.png);
+}
+
+.option--guessed {
+  background-image: url(../../images/Gardener_guessed.png);
+  color: var(--dark);
+} */
 
 .option-button {
   padding: 0.7em 1.2em;
