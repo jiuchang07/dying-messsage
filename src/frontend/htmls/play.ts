@@ -94,6 +94,20 @@ function setReadyModal(room: Room, host: boolean) {
   removeReadyModal(readyModal, room);
 }
 
+function setRoleModal(newState: GameState, room: Room) {
+  var roleModal = document.getElementById("role-modal");
+  if (newState.playerMap.get(room.sessionId).isNovelist) {
+    roleModal.textContent = "You are a Novelist";
+  } else {
+    roleModal.textContent = "You are a Detective";
+  }
+  if (newState.phase === "GAMESTART") {
+    setTimeout(() => {
+      roleModal.style.display = "none";
+    }, 2000);
+  }
+}
+
 function displayPhase(newState: GameState) {
   var round = document.getElementById("round");
   if (newState.phase === "GAMESTART") {
@@ -107,12 +121,27 @@ function displayPhase(newState: GameState) {
   }
 }
 
+function setLostModal() {
+  var revealModal = document.getElementById("reveal-modal");
+  revealModal.style.display = "block";
+  revealModal.style.backgroundColor = "red";
+  revealModal.textContent = "FAIL";
+  
+}
+
+function setWonModal() {
+  var revealModal = document.getElementById("reveal-modal");
+  revealModal.style.display = "block";
+  revealModal.style.backgroundColor = "green";
+  revealModal.textContent = "SUCCESS!";
+}
+
 function reveal(newState: GameState) {
   if (newState.phase === "REVEAL") {
     if (newState.life === 0) {
-      alert("You lost!");
+      setLostModal();
     } else {
-      alert("You won!");
+      setWonModal();
     }
   }
 }
@@ -267,7 +296,8 @@ function addCompOptions(newState: GameState, room: Room, component: HTMLElement,
     componentOptions.appendChild(optionEl);
     if (
       (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS")) &&
-      !newState.playerMap[room.sessionId].isNovelist
+      !newState.playerMap[room.sessionId].isNovelist &&
+      !option.isExcluded
     ) {
       if (option.isGuessed) {
         optionEl.className = " option-cancel-button " + optionClassDefault + optionClassGuessed;
@@ -348,8 +378,11 @@ function addComponents(
       component.onclick = () => {};
     }
     addCompOptions(newState, room, component, comp);
-    addCompAdj(room, component, comp);
-    addCompNoun(room, component, comp);
+    var compHints = document.createElement("div");
+    compHints.className = "comp-hints";
+    component.appendChild(compHints);
+    addCompAdj(room, compHints, comp);
+    addCompNoun(room, compHints, comp);
     componentsList.appendChild(component);
   });
 }
@@ -445,6 +478,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
     .then((room) => {
       room.onStateChange((newState: GameState) => {
+        setRoleModal(newState, room);
         drawGameboard(newState, room);
         reveal(newState);
       });

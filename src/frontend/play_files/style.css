@@ -6,8 +6,10 @@
   --modal: rgba(0, 0, 0, 1);
   --not-ready: rgb(255, 112, 112);
   --adj-button: rgb(146, 151, 238);
+  --adj-button-secondary: rgb(212, 214, 248);
   --adj-button-hover: rgb(176, 179, 242);
   --noun-button: rgb(238, 146, 146);
+  --noun-button-secondary: rgb(242, 213, 213);
   --noun-button-hover: rgb(242, 176, 176);
   --solution: rgb(0, 149, 255);
   --guessed: rgb(146, 238, 146);
@@ -22,7 +24,7 @@
   --dim-background: rgba(68, 1, 1, 0.4);
   --red-background: rgba(84, 2, 2, 1);
   --team-blue: rgb(30, 14, 208);
-  --card-ratio: 0.75;
+  --card-ratio: 0.65;
   --card-height: 150px;
 }
 
@@ -53,6 +55,21 @@ body {
     height: 100%; /* Full height */
     overflow: unset;  /* Enable scroll if needed */
     background-color: var(--red-background); /* Black w/ opacity */
+}
+
+.reveal-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 200; /* Sit on bottom */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: unset;  /* Enable scroll if needed */
+  font-size: 200px;
+  text-align: center;
+  line-height: normal;
+  font-family: 'Satire';
 }
 
 .modal {
@@ -220,11 +237,18 @@ body {
 }
 
 .nickname-modal {
-  z-index: 102;
+  z-index: 103;
 }
 
 .ready-modal {
+  z-index: 102;
+}
+
+.role-modal {
   z-index: 101;
+  color: white !important;
+  font-family: 'Satire';
+  font-size: 30px;
 }
 
 .modal .button--secondary {
@@ -270,18 +294,21 @@ body {
   background-color: var(--primary);
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 0 1em -0.3em #00000080;
-  transition: box-shadow 80ms;
+  /* box-shadow: 0 0 1em -0.3em #00000080; */
+  /* transition: box-shadow 80ms; */
 }
 
 .button:hover {
-  box-shadow: 0 0 1em -0.3em #000c;
+  /* box-shadow: 0 0 1em -0.3em #000c; */
   background-color: var(--primary-hover);
   color: #fff;
 }
 
 .button--secondary {
   padding: 0.7em 1.2em;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: var(--borderradius);
   background-color: var(--secondary-button);
   color: var(--dark);
   box-shadow: none;
@@ -307,17 +334,19 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
+  margin: 0.5em auto;
 }
 
 .hint {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
+  margin: 0.5em auto;
 }
 
 .bottomHalf {
@@ -325,8 +354,9 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
+  margin: 0.5em auto;
 }
 
 .life {
@@ -335,12 +365,31 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+
 }
 
-.life-title {
+.life, .round {
+  align-items: center;
+  align-content: center;
+  margin: 0.5em auto;
+}
+
+.round {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.5em;
+  font-family: 'Satire';
+  padding: 0.5em 0.5em 0.5em;
+  border:rgba(255, 255, 255, 0.6) 2px solid;
+}
+
+
+.life-title, .guess-title, .adj-title, .noun-title, .component-title{
   color: #fff;
+  font-size: 1.5em;
+  font-weight: 600;
+  font-family: 'Satire';
+  margin: 0.5em;
 }
 
 .life-list {
@@ -353,7 +402,7 @@ body {
 }
 
 .life-list-item {
-
+  margin: 0.5em auto;
 }
 
 .guess {
@@ -361,8 +410,9 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
+  margin: 0.5em auto;
 }
 
 .guess-title {
@@ -378,6 +428,7 @@ body {
 }
 
 .guess-list-item {
+  margin: 0.5em auto;
 }
 
 .adj {
@@ -398,6 +449,11 @@ body {
 
 .adj-list-item {
   background-color: var(--adj-button);
+  margin: 0.5em auto;
+}
+
+.adj-list-item .button--secondary {
+  background-color: var(--adj-button-secondary) !important;
 }
 
 .adj-list-item:hover {
@@ -406,6 +462,11 @@ body {
 
 .adj-component {
   background-color: var(--adj-button);
+  margin: 0.5em auto;
+  padding: 0.7em 1.2em;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: var(--borderradius);
 }
 
 .noun {
@@ -426,6 +487,10 @@ body {
 
 .noun-list-item {
   background-color: var(--noun-button);
+  margin: 0.5em auto;
+}
+.noun-list-item .button--secondary {
+  background-color: var(--noun-button-secondary);
 }
 
 .noun-list-item:hover {
@@ -434,6 +499,11 @@ body {
 
 .noun-component {
   background-color: var(--noun-button);
+  margin: 0.5em auto;
+  padding: 0.7em 1.2em;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: var(--borderradius);
 }
 
 .component {
@@ -463,6 +533,10 @@ body {
 }
 
 .component-list-item-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.5em;
+  font-family: 'Satire';
 }
 
 .option-list {
@@ -483,10 +557,10 @@ body {
   width: calc(var(--card-height)*var(--card-ratio));
   border-radius: 3px;
   background-size: cover;
-  color: white;
+  color: var(--dark);
   align-content: center;
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1em;
   line-height: calc(var(--card-height)/2);
   padding: 2em;
   margin: 0.3em;
@@ -524,4 +598,13 @@ body {
   padding: 0.7em 1.2em;
   cursor: pointer;
   box-shadow: none;
+}
+
+.comp-hints {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: left;
+  align-content: left;
 }
