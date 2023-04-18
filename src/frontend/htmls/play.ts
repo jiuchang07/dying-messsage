@@ -18,6 +18,17 @@ function askNickname(room: Room) {
   var nicknameModal = document.getElementById("nickname-modal");
   nicknameModal.style.display = "block";
   // document.getElementById("container").style.display = "block";
+  document.getElementById("nickname").addEventListener("keypress", function(event) {
+    console.log("keypress");
+    // If the user presses the "Enter" key on the keyboard
+    if (event.key === "Enter") {
+      console.log("enter");
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById("nickname-btn").click();
+    }
+  });
   document.getElementById("nickname-btn").onclick = function () {
     const nickname = document.getElementById("nickname").value;
     if (checknickname(nickname)) {
@@ -112,20 +123,25 @@ function addHTMLEl(
   title: string,
   i: number
 ) {
-  var el = document.createElement("div");
+  var el = parent;//document.createElement("div");
   el.className = className;
-  if (parent.hasChildNodes() && parent.childNodes.length > 5) {
-    parent.replaceChild(el, parent.childNodes[i]);
-  } else {
-    parent.appendChild(el);
-  }
+  // if (parent.hasChildNodes() && parent.childNodes.length > 5) {
+  //   parent.replaceChild(el, parent.childNodes[i]);
+  // } else {
+  //   parent.appendChild(el);
+  // }
   var elTitle = document.createElement("div");
   elTitle.className = className + "-title";
   elTitle.textContent = title;
   var elList = document.createElement("div");
   elList.className = className + "-list";
-  el.appendChild(elTitle);
-  el.appendChild(elList);
+  if (el.hasChildNodes() && el.childNodes.length > 1) {
+    el.replaceChild(elTitle, el.childNodes[0]);
+    el.replaceChild(elList, el.childNodes[1]);
+  } else {
+    el.appendChild(elTitle);
+    el.appendChild(elList);
+  }
   return elList;
 }
 
@@ -372,28 +388,39 @@ function addEndTurnButton(
   room: Room,
   gameboard: HTMLElement
 ) {
-  var guessButton = document.createElement("div");
+  var guessButton = gameboard;//document.createElement("div");
   if (newState.playerMap[room.sessionId].isNovelist) {
     addEndTurnButtonForNovelist(newState, room, guessButton);
   } else {
     addEndTurnButtonForDetective(newState, room, guessButton);
   }
-  if (gameboard.hasChildNodes() && gameboard.childNodes.length > 5) {
-    gameboard.replaceChild(guessButton, gameboard.lastChild);
-  } else {
-    gameboard.appendChild(guessButton);
-  }
+  // if (gameboard.hasChildNodes() && gameboard.childNodes.length > 5) {
+  //   gameboard.replaceChild(guessButton, gameboard.lastChild);
+  // } else {
+  //   gameboard.appendChild(guessButton);
+  // }
 }
 
 function drawGameboard(newState: GameState, room: Room) {
   displayPhase(newState);
-  var gameboard = document.getElementById("gameboard");
-  addLives(newState, room, gameboard);
-  addGuesses(newState, room, gameboard);
-  addAdjOptions(newState, room, gameboard);
-  addNounOptions(newState, room, gameboard);
-  addComponents(newState, room, gameboard);
-  addEndTurnButton(newState, room, gameboard);
+  // var gameboard = document.getElementById("gameboard");
+  var topHalf = document.getElementById("topHalf");
+  var life = document.getElementById("life");
+  var guess = document.getElementById("guess");
+  var endTurnButton = document.getElementById("endTurnButton");
+  var hints = document.getElementById("hint");
+  var adj = document.getElementById("adj");
+  var noun = document.getElementById("noun");
+  var bottomHalf = document.getElementById("bottomHalf");
+  var components = document.getElementById("components");
+  
+  addLives(newState, room, life);
+  addGuesses(newState, room, guess);
+  addEndTurnButton(newState, room, endTurnButton);
+
+  addAdjOptions(newState, room, adj);
+  addNounOptions(newState, room, noun);
+  addComponents(newState, room, components);
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

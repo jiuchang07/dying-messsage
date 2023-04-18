@@ -39,12 +39,27 @@
       <div id="ready-modal" class="modal ready-modal modal-content">
         <!-- <div id="ready-modal-content" class="modal-content"></div> -->
       </div>
-		  <div class="controls svelte-1cisg4z">
+		  <!-- <div class="controls svelte-1cisg4z">
 			<button type="button" class="button button--secondary button--small">
 			  <div id="round"></div>
 			</button>
-		  </div>
-      <div id="gameboard"></div>
+		  </div> -->
+      <div class="gameboard">
+        <div class="topHalf">
+			  <div id="round"></div>
+        <div id="life"></div>
+          <div id="guess"></div>
+          <div id="endTurnButton"></div>
+          <div class="hint">
+            <div id="adj"></div>
+            <div id="noun"></div>
+          </div>
+        </div>
+        <div class="bottomHalf">
+          <div id="components"></div>
+          <div id="component-hints"></div>
+        </div>
+      </div>
 		</main>
     <script type="text/typescript" src="htmls/play.ts"></script>
     <script src="../js/typescript.min.js" type="text/javascript"></script>
