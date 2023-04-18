@@ -6,9 +6,6 @@ import {ReadyState, NOT_READY, READY} from "../../frontend/htmls/readystate";
 import { Hint, NullHint } from "./schema/Hint";
 import { Component } from "./schema/Component";
 import { Option } from "./schema/Option";
-import { Guess } from "./schema/Guess";
-import { Adjective, getRandomAdj } from "./schema/Adjective";
-import { Noun, getRandomNoun } from "./schema/Noun";
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class DyingMessageRoom extends Room<DyingMessageRoomState> {
@@ -16,6 +13,8 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   public DEFAULT_COMPONENTS = new MapSchema<string[]> ({"motives": ["jealousy", "greed", "revenge", "anger", "love", "hate", "envy", "fear", "desperation", "obsession", "pride", "power", "lust", "betrayal", "self-defense", "insanity", "protection", "accident", "blackmail", "extortion"], 
   "occupations": ["butler", "maid", "gardener", "cook", "guest", "chauffeur", "nanny", "housekeeper", "security guard", "personal assistant", "doctor", "nurse", "lawyer", "accountant", "teacher", "engineer", "scientist", "artist", "musician", "writer"],
   "weapons": ["knife", "gun", "hammer", "poison", "rope", "candlestick", "wrench", "lead pipe", "revolver", "screwdriver", "axe", "crowbar", "shovel", "bat", "golf club", "tire iron", "chainsaw", "scissors", "letter opener", "fire poker"]});
+  public DEFAULT_HINTS = new MapSchema<string[]> ({"adjectives": ["beautiful", "happy", "smart", "funny", "brave", "big", "small", "red", "blue", "green", "fast", "slow", "hot", "cold", "sweet", "sour", "soft", "hard", "loud", "quiet", "young", "old", "new", "old", "rich", "poor", "strong", "weak", "good", "bad", "nice", "mean", "easy", "hard", "light", "dark", "high", "low", "long", "short", "round", "square", "clean", "dirty", "dry", "wet", "full", "empty", "bright","dull"],
+  "nouns": ["cat", "dog", "book", "car", "house", "tree", "flower", "phone", "computer", "chair", "table", "pen", "pencil", "paper", "water", "coffee", "tea", "milk", "cake", "pizza", "apple", "banana", "orange", "lemon", "lime", "grape", "strawberry", "cherry", "tomato", "potato", "onion", "garlic", "carrot", "lettuce", "cheese", "bread", "butter", "jam", "honey", "egg","bacon","ham","chicken","beef","fish","rice","pasta","noodle","soup","salad","sandwich"]});
   public DEFAULT_OPTIONS = 8;
   private DEFAULT_GUESSES = 6;
   private DEFAULT_ROUNDS = 3;
@@ -142,13 +141,13 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   private assignHints() {
     this.state.components.forEach((comp, key) => {
       comp.hintAdj.forEach((hint, key) => {
-        var newAdj = new (hint.constructor as { new (): Adjective })();
+        var newAdj = new (hint.constructor as { new (): Hint })();
         Object.assign(newAdj, hint);
         newAdj.assigned = true;
         comp.hintAdj[key] = newAdj;
       });
       comp.hintNoun.forEach((hint, key) => {
-        var newNoun = new (hint.constructor as { new (): Noun })();
+        var newNoun = new (hint.constructor as { new (): Hint })();
         Object.assign(newNoun, hint);
         newNoun.assigned = true;
         comp.hintNoun[key] = newNoun;
@@ -205,13 +204,11 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   private addRoundHints() {
     var currentAdjOptionsSize = this.state.adjOptions.size;
     while (this.state.adjOptions.size < currentAdjOptionsSize + this.state.drawHints) {
-      const adj = getRandomAdj();
-      this.state.adjOptions.set(adj.value, adj);
+      this.state.drawHint(this.state.allAdj, this.state.adjOptions, "adjective");
     }
     var currentNounOptionsSize = this.state.nounOptions.size;
     while (this.state.nounOptions.size < currentNounOptionsSize + this.state.drawHints) {
-      const noun = getRandomNoun();
-      this.state.nounOptions.set(noun.value, noun);
+      this.state.drawHint(this.state.allNoun, this.state.nounOptions, "noun");
     }
   }
 
@@ -275,7 +272,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
       this.DEFAULT_OPTIONS, 
       this.DEFAULT_ROUNDS,
       this.DEFAULT_INITIAL_HINT_OPTIONS,
-      // this.DEFAULT_INITIAL_HINTS,
+      this.DEFAULT_HINTS,
       this.DEFAULT_DRAW_HINTS,
       this.DEFAULT_ROUND_HINTS,
       this.DEFAULT_GUESSES

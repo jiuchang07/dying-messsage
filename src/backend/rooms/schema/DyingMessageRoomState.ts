@@ -1,6 +1,4 @@
 import { Schema, CollectionSchema, MapSchema, SetSchema, type } from "@colyseus/schema";
-import { getRandomAdj, Adjective } from "./Adjective";
-import { getRandomNoun, Noun } from "./Noun";
 import { Component, createOptions } from "./Component";
 import { Player } from "./Player";
 import { Hint, NullHint } from "./Hint";
@@ -14,11 +12,17 @@ export class DyingMessageRoomState extends Schema {
   @type("number")
   life: number;
 
-  @type({ map: Adjective })
-  adjOptions: MapSchema<Adjective> = new MapSchema<Adjective>();
+  @type(["string"])
+  allAdj: string[] = [];
 
-  @type({ map: Noun })
-  nounOptions: MapSchema<Noun> = new MapSchema<Noun>();
+  @type(["string"])
+  allNoun: string[] = [];
+
+  @type({ map: Hint })
+  adjOptions: MapSchema<Hint> = new MapSchema<Hint>();
+
+  @type({ map: Hint })
+  nounOptions: MapSchema<Hint> = new MapSchema<Hint>();
 
   @type("number")
   round: number;
@@ -87,7 +91,7 @@ export class DyingMessageRoomState extends Schema {
     options: number, 
     rounds: number,
     initial_hint_options: number,
-    // initial_hints: number,
+    hints: MapSchema<string[]>,
     drawHints: number,
     roundHints: number,
     numGuesses: number,
@@ -95,6 +99,8 @@ export class DyingMessageRoomState extends Schema {
     super();
     components.forEach((o, c) => {this.components.set(c, new Component(c, o))})
     this.setOptions(options);
+    this.allAdj = hints.get("adjectives");
+    this.allNoun = hints.get("nouns");
     this.life = life;
     this.setHints(initial_hint_options);
     this.round = 1;
@@ -130,13 +136,18 @@ export class DyingMessageRoomState extends Schema {
     var num:number = initial_hint_options; 
     var i:number; 
     while (this.adjOptions.size < num) {
-      const adj = getRandomAdj();
-      this.adjOptions.set(adj.value, adj);
+      this.drawHint(this.allAdj, this.adjOptions, "adjective");
     }
     num = initial_hint_options;
     while (this.nounOptions.size < num) {
-      const noun = getRandomNoun();
-      this.nounOptions.set(noun.value, noun);
+      this.drawHint(this.allNoun, this.nounOptions, "noun");
     }
+  }
+  public drawHint(allHint:string[], hintInGame:MapSchema<Hint>, type:string): void {
+    const randomIdx = Math.floor(Math.random() * allHint.length);
+    const hintValue = allHint[randomIdx];
+    delete allHint[randomIdx];
+    const hint = new Hint(hintValue, type);
+    hintInGame.set(hint.value, hint);
   }
 }

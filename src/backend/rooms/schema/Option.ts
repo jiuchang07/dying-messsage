@@ -1,5 +1,4 @@
 import {Schema, type} from "@colyseus/schema";
-// import {Component} from "./Component";
  
 export class Option extends Schema {
     @type("string")

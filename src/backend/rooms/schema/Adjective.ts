@@ -1,9 +1,8 @@
 import {Hint} from "./Hint";
  
-export abstract class Adjective extends Hint {
-    constructor() {
-        super();
-        this.type = "adjective";
+export class Adjective extends Hint {
+    constructor(value: string) {
+        super(value, "adjective");
     }
 }
 

@@ -1,9 +1,6 @@
 import {Schema, SetSchema, MapSchema, type} from "@colyseus/schema";
 import {Option} from "./Option";
 import {Hint} from "./Hint";
-import { Adjective } from "./Adjective";
-import { Noun } from "./Noun";
-import { create } from "@colyseus/core/build/MatchMaker";
 
 export class Component extends Schema {
     @type("string")
@@ -12,11 +9,11 @@ export class Component extends Schema {
     @type({ map: Option })
     options: MapSchema<Option> = new MapSchema<Option>();
 
-    @type({ map: Adjective })
-    hintAdj: MapSchema<Adjective> = new MapSchema<Adjective>();
+    @type({ map: Hint })
+    hintAdj: MapSchema<Hint> = new MapSchema<Hint>();
 
-    @type({ map: Noun })
-    hintNoun: MapSchema<Noun> = new MapSchema<Noun>();
+    @type({ map: Hint })
+    hintNoun: MapSchema<Hint> = new MapSchema<Hint>();
 
     @type("boolean")
     finalGuessed: boolean = false;
@@ -30,11 +27,11 @@ export class Component extends Schema {
         this.value = value;
     }
 
-    public setHintAdj(hint:Adjective) {
+    public setHintAdj(hint:Hint) {
         this.hintAdj.set(hint.value, hint);
     }
 
-    public setHintNoun(hint:Noun) {
+    public setHintNoun(hint:Hint) {
         this.hintNoun.set(hint.value, hint);
     }
 

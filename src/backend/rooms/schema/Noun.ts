@@ -1,9 +1,8 @@
 import {Hint} from "./Hint";
  
-export abstract class Noun extends Hint {
-    constructor() {
-        super();
-        this.type = "noun";
+export class Noun extends Hint {
+    constructor(value:string) {
+        super(value, "noun");
     }
 }
 

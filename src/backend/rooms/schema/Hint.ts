@@ -1,8 +1,8 @@
 import {Schema, type} from "@colyseus/schema";
  
-export abstract class Hint extends Schema {
+export class Hint extends Schema {
     @type("string")
-    abstract value: string;
+    value: string;
 
     @type("string")
     type: string;
@@ -10,17 +10,18 @@ export abstract class Hint extends Schema {
     @type("boolean")
     assigned: boolean = false;
 
-    constructor() {
+    constructor(value: string, type: string) {
         super();
+        this.value = value;
+        this.type = type;
     }
 
 }
 
 export class NullHint extends Hint {
-    value = "null";
     constructor() {
-        super();
-        this.type = "null";
+        super("null", "null");
     }
     
 }
+
