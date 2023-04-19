@@ -2,6 +2,10 @@ function checknickname(nickname: String): boolean {
   return true;
 }
 
+function toUpperCase(str: string): string {
+ return str[0].toUpperCase() + str.substr(1).toLowerCase();
+}
+
 function roomExists(client: Client): boolean {
   var exists = false;
   client.getAvailableRooms("dying_message").then((rooms) => {
@@ -161,7 +165,7 @@ function addHTMLEl(
   // }
   var elTitle = document.createElement("div");
   elTitle.className = className + "-title";
-  elTitle.textContent = title;
+  elTitle.textContent = toUpperCase(title);
   var elList = document.createElement("div");
   elList.className = className + "-list";
   if (el.hasChildNodes() && el.childNodes.length > 1) {
@@ -279,6 +283,7 @@ function addCompOptions(newState: GameState, room: Room, component: HTMLElement,
   componentOptions.className = "option-list";
   comp.options.forEach((option, key) => {
     var optionEl = document.createElement("div");
+    optionEl.style.backgroundImage = "url(../images/" + option.value.replace(/\s/g, "") + ".png)";
     var optionClassDefault = "option-list-item";
     if (option.isSolution && newState.playerMap[room.sessionId].isNovelist) {
       optionClassDefault += " option--solution";
@@ -292,7 +297,7 @@ function addCompOptions(newState: GameState, room: Room, component: HTMLElement,
       optionClassGuessed = "";
     }
     optionEl.className = optionClassDefault;
-    optionEl.textContent = option.value;
+    optionEl.textContent = toUpperCase(option.value);
     componentOptions.appendChild(optionEl);
     if (
       (newState.phase === "DETECTIVE" || (newState.phase === "FINALGUESS")) &&
@@ -323,6 +328,7 @@ function addCompAdj(room: Room, component: HTMLElement, comp: any): HTMLElement 
   componentAdj.className = "adj-component";
   comp.hintAdj.forEach((adj, key) => {
     var adjEl = document.createElement("div");
+    adjEl.style.padding = "0.7em 1.2em";
     adjEl.className = "adj-list-item";
     adjEl.textContent = key;
     if (!adj.assigned) {
@@ -342,6 +348,7 @@ function addCompNoun(room: Room, component: HTMLElement, comp: any): HTMLElement
   componentNoun.className = "noun-component";
   comp.hintNoun.forEach((noun, key) => {
     var nounEl = document.createElement("div");
+    nounEl.style.padding = "0.7em 1.2em";
     nounEl.className = "noun-list-item";
     nounEl.textContent = key;
     if (!noun.assigned) {
@@ -366,7 +373,7 @@ function addComponents(
     var component = document.createElement("div");
     var componentTitle = document.createElement("div");
     componentTitle.className = "component-list-item-title";
-    componentTitle.textContent = key;
+    componentTitle.textContent = toUpperCase(key);
     component.appendChild(componentTitle);
     if (enableCompButton(newState, room, comp)) {
       component.className = "component button";

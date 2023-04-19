@@ -10,7 +10,7 @@ const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   private DEFAULT_LIFE = 4;
-  public DEFAULT_COMPONENTS = new MapSchema<string[]> ({"motives": ["jealousy", "greed", "revenge", "anger", "love", "hate", "envy", "fear", "desperation", "obsession", "pride", "power", "lust", "betrayal", "self-defense", "insanity", "protection", "accident", "blackmail", "extortion"], 
+  public DEFAULT_COMPONENTS = new MapSchema<string[]> ({"motives": ["jealousy", "greed", "revenge", "anger", "love", "hate", "envy", "fear", "desperation", "obsession", "pride", "power", "betrayal", "self-defense", "insanity", "protection", "accident", "blackmail", "extortion"], 
   "occupations": ["butler", "maid", "gardener", "cook", "guest", "chauffeur", "nanny", "housekeeper", "security guard", "personal assistant", "doctor", "nurse", "lawyer", "accountant", "teacher", "engineer", "scientist", "artist", "musician", "writer"],
   "weapons": ["knife", "gun", "hammer", "poison", "rope", "candlestick", "wrench", "lead pipe", "revolver", "screwdriver", "axe", "crowbar", "shovel", "bat", "golf club", "tire iron", "chainsaw", "scissors", "letter opener", "fire poker"]});
   public DEFAULT_HINTS = new MapSchema<string[]> ({"adjectives": ["beautiful", "happy", "smart", "funny", "brave", "big", "small", "red", "blue", "green", "fast", "slow", "hot", "cold", "sweet", "sour", "soft", "hard", "loud", "quiet", "young", "old", "new", "old", "rich", "poor", "strong", "weak", "good", "bad", "nice", "mean", "easy", "hard", "light", "dark", "high", "low", "long", "short", "round", "square", "clean", "dirty", "dry", "wet", "full", "empty", "bright","dull"],

@@ -1,6 +1,8 @@
 :root {
   --primary: rgb(255, 20, 20);
   --primary-hover: rgb(250, 46, 46);
+  --dark-red: rgb(183, 0, 0);
+  --dark-red-hover: rgb(215, 0, 0);
   --secondary-button: rgb(255, 229, 229);
   --secondary-button-hover: rgb(255, 204, 204);
   --modal: rgba(0, 0, 0, 1);
@@ -40,7 +42,7 @@ body {
   overflow: hidden;
   image-rendering: pixelated;
   user-select: none;
-  font-weight: 500;
+  font-weight: 600;
   color: #fff;
   background: linear-gradient(#301414, var(--red-background));
 }
@@ -325,8 +327,8 @@ body {
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
 }
 
 .topHalf {
@@ -389,7 +391,7 @@ body {
   font-size: 1.5em;
   font-weight: 600;
   font-family: 'Satire';
-  margin: 0.5em;
+  /* margin: 0.5em; */
 }
 
 .life-list {
@@ -397,8 +399,8 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
 }
 
 .life-list-item {
@@ -423,12 +425,19 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
 }
 
 .guess-list-item {
   margin: 0.5em auto;
+}
+
+.adj-list-item, .noun-list-item{
+  margin:auto;
+  /* border-width: 2px;
+  border-style: solid;
+  border-color: var(--dark); */
 }
 
 .adj {
@@ -443,13 +452,15 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
 }
 
 .adj-list-item {
   background-color: var(--adj-button);
   margin: 0.5em auto;
+  text-align: center;
+  width: 60px;
 }
 
 .adj-list-item .button--secondary {
@@ -463,7 +474,7 @@ body {
 .adj-component {
   background-color: var(--adj-button);
   margin: 0.5em auto;
-  padding: 0.7em 1.2em;
+  /* padding: 0.7em 1.2em; */
   font-weight: 600;
   font-size: 1rem;
   border-radius: var(--borderradius);
@@ -481,13 +492,15 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
 }
 
 .noun-list-item {
   background-color: var(--noun-button);
   margin: 0.5em auto;
+  text-align: center;
+  width: 60px;
 }
 .noun-list-item .button--secondary {
   background-color: var(--noun-button-secondary);
@@ -500,7 +513,7 @@ body {
 .noun-component {
   background-color: var(--noun-button);
   margin: 0.5em auto;
-  padding: 0.7em 1.2em;
+  /* padding: 0.7em 1.2em; */
   font-weight: 600;
   font-size: 1rem;
   border-radius: var(--borderradius);
@@ -511,12 +524,12 @@ body {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
 }
 
 .component-title {
-  /* color: var(--dark); */
+  transform: rotate(270deg);
 }
 
 .component-list {
@@ -524,16 +537,18 @@ body {
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
+  width: 2300px;
+
 }
 
 .component-list-item {
-
 }
 
 .component-list-item-title {
-  font-size: 1.5em;
+  transform: rotate(270deg);
+  font-size: 2em;
   font-weight: 600;
   margin: 0.5em;
   font-family: 'Satire';
@@ -556,15 +571,18 @@ body {
   height: var(--card-height);
   width: calc(var(--card-height)*var(--card-ratio));
   border-radius: 3px;
+  border-width: 8px;
+  /* border-color:rgba(0, 0, 0, 1); */
   background-size: cover;
-  color: var(--dark);
+  color: var(--dark-red);
   align-content: center;
-  text-align: center;
-  font-size: 1em;
+  text-align: left;
+  font-size: 2em;
+  font-weight: 600;
   line-height: calc(var(--card-height)/2);
   padding: 2em;
   margin: 0.3em;
-  background-image: url(../images/Gardener.png);
+  background-image: url(../images/gardener.png);
 }
 
 
@@ -572,20 +590,25 @@ body {
 
 
 .option--solution {
-  background-image: url(../images/Gardener_solution.png);
+  /* background-image: url(../images/Gardener_solution.png); */
+  box-shadow: var(--solution) 0px 0px 0px 8px;
+  border-color: var(--solution);
 }
 
 .option--excluded {
-  background-image: url(../images/logo.png);
+  background-image: url(../images/logo.png) !important;
 }
 
 .option--guessed {
   background-image: url(../images/Gardener_guessed.png);
-  color: var(--dark);
+  /* color: var(--dark); */
+  box-shadow: var(--guessed) 0px 0px 0px 8px;
+  border-color: var(--guessed) !important;
 }
 
 .option-button {
-  padding: 0.7em 1.2em;
+  border-style: solid;
+  border-color: var(--dark);
   cursor: pointer;
   box-shadow: none;
 }
@@ -605,6 +628,6 @@ body {
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: space-around;
-  align-items: left;
-  align-content: left;
+  align-items: center;
+  align-content: center;
 }

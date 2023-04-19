@@ -4,10 +4,14 @@ import { Player } from "./Player";
 import { Hint, NullHint } from "./Hint";
 import { Option } from "./Option";
 
+
 export class DyingMessageRoomState extends Schema {
 
   @type({ map: Component })
   components: MapSchema<Component> = new MapSchema<Component>();
+
+  // @type({ map: "string" })
+  // optionImages: MapSchema<string> = new MapSchema<string>();
 
   @type("number")
   life: number;
@@ -98,6 +102,7 @@ export class DyingMessageRoomState extends Schema {
   ) {
     super();
     components.forEach((o, c) => {this.components.set(c, new Component(c, o))})
+    // this.optionImages = optionImages;
     this.setOptions(options);
     this.allAdj = hints.get("adjectives");
     this.allNoun = hints.get("nouns");

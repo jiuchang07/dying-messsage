@@ -43,6 +43,9 @@
     "cors": "^2.8.5",
     "ejs": "^3.1.8",
     "express": "^4.16.4",
-    "underscore": "^1.13.6"
+    "node-fetch": "^3.3.1",
+    "underscore": "^1.13.6",
+    "web-request": "^1.0.7",
+    "xhr2": "^0.2.1"
   }
 }
