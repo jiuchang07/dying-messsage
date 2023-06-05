@@ -405,6 +405,7 @@ body {
 
 .life-list-item {
   margin: 0.5em auto;
+  background-image: url(../images/life.png);
 }
 
 .guess {

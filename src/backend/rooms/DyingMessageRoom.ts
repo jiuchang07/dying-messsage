@@ -7,7 +7,6 @@ import { Hint, NullHint } from "./schema/Hint";
 import { Component } from "./schema/Component";
 import { Option } from "./schema/Option";
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 export class DyingMessageRoom extends Room<DyingMessageRoomState> {
   private DEFAULT_LIFE = 4;
   public DEFAULT_COMPONENTS = new MapSchema<string[]> ({"motives": ["jealousy", "greed", "revenge", "anger", "love", "hate", "envy", "fear", "desperation", "obsession", "pride", "power", "betrayal", "self-defense", "insanity", "protection", "accident", "blackmail", "extortion"], 
@@ -120,7 +119,7 @@ export class DyingMessageRoom extends Room<DyingMessageRoomState> {
     this.state.givenAllInitialNounHints = this.givenAllInitialNounHints();
     return this.state.givenAllInitialAdjHints && this.state.givenAllInitialNounHints;
   }
-
+ 
   private givenAllInitialAdjHints() {
     var ret = true;
     this.state.components.forEach((comp, key) => {
